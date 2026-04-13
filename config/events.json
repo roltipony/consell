@@ -1,0 +1,76 @@
+{
+  "market_day": {
+    "id": "market_day",
+    "title": "Market Day!",
+    "description": "Merchants from afar flood the city. Trade booms!",
+    "weight": 3.0,
+    "min_population": 10,
+    "duration_ticks": 0,
+    "effects": {
+      "gold_delta": 150,
+      "happiness_delta": 0.05
+    }
+  },
+  "drought": {
+    "id": "drought",
+    "title": "Drought",
+    "description": "A dry spell reduces water supplies.",
+    "weight": 1.5,
+    "min_population": 5,
+    "duration_ticks": 48,
+    "effects": {
+      "gold_delta": 0,
+      "happiness_delta": -0.1,
+      "resource_delta": { "water": -20 }
+    }
+  },
+  "festival": {
+    "id": "festival",
+    "title": "Harvest Festival",
+    "description": "Citizens celebrate the harvest. Happiness soars!",
+    "weight": 2.0,
+    "min_population": 20,
+    "duration_ticks": 0,
+    "effects": {
+      "gold_delta": -100,
+      "happiness_delta": 0.15
+    }
+  },
+  "bandit_raid": {
+    "id": "bandit_raid",
+    "title": "Bandit Raid!",
+    "description": "Bandits struck the outskirts. Gold was stolen.",
+    "weight": 1.0,
+    "min_population": 15,
+    "duration_ticks": 0,
+    "effects": {
+      "gold_delta": -200,
+      "happiness_delta": -0.08
+    }
+  },
+  "bountiful_harvest": {
+    "id": "bountiful_harvest",
+    "title": "Bountiful Harvest",
+    "description": "An exceptional growing season fills the granaries.",
+    "weight": 2.5,
+    "min_population": 8,
+    "duration_ticks": 0,
+    "effects": {
+      "gold_delta": 50,
+      "happiness_delta": 0.07,
+      "resource_delta": { "food": 80 }
+    }
+  },
+  "wandering_craftsman": {
+    "id": "wandering_craftsman",
+    "title": "Wandering Craftsman",
+    "description": "A skilled craftsman offers their services at a discount.",
+    "weight": 1.8,
+    "min_population": 0,
+    "duration_ticks": 0,
+    "effects": {
+      "gold_delta": 0,
+      "happiness_delta": 0.03
+    }
+  }
+}

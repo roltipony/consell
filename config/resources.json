@@ -1,0 +1,52 @@
+{
+  "food": {
+    "id": "food",
+    "display_name": "Food",
+    "description": "Sustains the population. Shortage causes unhappiness.",
+    "icon_path": "res://assets/icons/resource_food.png",
+    "starting_amount": 50,
+    "max_storage": 500,
+    "critical_threshold": 10,
+    "happiness_penalty_per_unit_below_threshold": -0.05
+  },
+  "water": {
+    "id": "water",
+    "display_name": "Water",
+    "description": "Fresh water. Required by many buildings.",
+    "icon_path": "res://assets/icons/resource_water.png",
+    "starting_amount": 30,
+    "max_storage": 300,
+    "critical_threshold": 5,
+    "happiness_penalty_per_unit_below_threshold": -0.04
+  },
+  "wood": {
+    "id": "wood",
+    "display_name": "Wood",
+    "description": "Basic construction material.",
+    "icon_path": "res://assets/icons/resource_wood.png",
+    "starting_amount": 100,
+    "max_storage": 1000,
+    "critical_threshold": 0,
+    "happiness_penalty_per_unit_below_threshold": 0.0
+  },
+  "stone": {
+    "id": "stone",
+    "display_name": "Stone",
+    "description": "Required for advanced construction.",
+    "icon_path": "res://assets/icons/resource_stone.png",
+    "starting_amount": 50,
+    "max_storage": 1000,
+    "critical_threshold": 0,
+    "happiness_penalty_per_unit_below_threshold": 0.0
+  },
+  "gold_coins": {
+    "id": "gold_coins",
+    "display_name": "Gold Coins",
+    "description": "Currency produced by commercial buildings.",
+    "icon_path": "res://assets/icons/resource_gold.png",
+    "starting_amount": 0,
+    "max_storage": 99999,
+    "critical_threshold": 0,
+    "happiness_penalty_per_unit_below_threshold": 0.0
+  }
+}

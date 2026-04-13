@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/InfoPanel.gd" id="1"]
+
+[node name="InfoPanel" type="PanelContainer"]
+script = ExtResource("1")
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+
+[node name="NameLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Name"
+
+[node name="DescLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Description"
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Level: 1 / 1"
+
+[node name="IncomeLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Income: 0"
+
+[node name="UpkeepLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Upkeep: 0"
+
+[node name="PopLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Housing: 0"
+
+[node name="JobsLabel" type="Label" parent="MarginContainer/VBox"]
+text = "Jobs: 0"
+
+[node name="UpgradeButton" type="Button" parent="MarginContainer/VBox"]
+text = "Upgrade"
+
+[node name="DemolishButton" type="Button" parent="MarginContainer/VBox"]
+text = "Demolish"

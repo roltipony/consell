@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/panels/BuildButton.gd" id="1"]
+
+[node name="BuildButton" type="Button"]
+script = ExtResource("1")
+custom_minimum_size = Vector2(260, 48)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+expand_mode = 1
+
+[node name="VBox" type="VBoxContainer" parent="HBoxContainer"]
+size_flags_horizontal = 3
+
+[node name="NameLabel" type="Label" parent="HBoxContainer/VBox"]
+text = "Building"
+
+[node name="CostLabel" type="Label" parent="HBoxContainer/VBox"]
+text = "💰 0"

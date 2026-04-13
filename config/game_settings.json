@@ -1,0 +1,37 @@
+{
+  "grid": {
+    "width": 64,
+    "height": 64,
+    "cell_size": [
+      64,
+      32
+    ]
+  },
+  "camera": {
+    "move_speed": 400.0,
+    "zoom_speed": 0.1,
+    "zoom_min": 0.3,
+    "zoom_max": 3.0,
+    "edge_scroll": true,
+    "edge_margin": 20
+  },
+  "economy": {
+    "starting_gold": 5000,
+    "default_tax_rate": 0.1
+  },
+  "population": {
+    "starting_population": 0,
+    "starting_happiness": 0.75
+  },
+  "events": {
+    "ticks_between_rolls": 240
+  },
+  "map_generator": {
+    "seed": 0,
+    "water_threshold": -0.35,
+    "mountain_threshold": 0.55,
+    "forest_threshold": 0.25,
+    "sand_threshold": -0.2,
+    "fertile_threshold": 0.1
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "grass": {
+    "id": "grass",
+    "display_name": "Grass",
+    "buildable": true,
+    "movement_cost": 1.0,
+    "tile_atlas_coords": [0, 0],
+    "happiness_modifier": 0.0
+  },
+  "forest": {
+    "id": "forest",
+    "display_name": "Forest",
+    "buildable": false,
+    "movement_cost": 2.0,
+    "tile_atlas_coords": [1, 0],
+    "happiness_modifier": 0.02,
+    "resource_yield": { "wood": 5 }
+  },
+  "water": {
+    "id": "water",
+    "display_name": "Water",
+    "buildable": false,
+    "movement_cost": 999,
+    "tile_atlas_coords": [2, 0],
+    "happiness_modifier": 0.03
+  },
+  "mountain": {
+    "id": "mountain",
+    "display_name": "Mountain",
+    "buildable": false,
+    "movement_cost": 999,
+    "tile_atlas_coords": [3, 0],
+    "happiness_modifier": 0.01,
+    "resource_yield": { "stone": 5 }
+  },
+  "sand": {
+    "id": "sand",
+    "display_name": "Sand",
+    "buildable": true,
+    "movement_cost": 1.5,
+    "tile_atlas_coords": [4, 0],
+    "happiness_modifier": -0.01
+  },
+  "fertile": {
+    "id": "fertile",
+    "display_name": "Fertile Land",
+    "buildable": true,
+    "movement_cost": 1.0,
+    "tile_atlas_coords": [5, 0],
+    "happiness_modifier": 0.01,
+    "farm_yield_bonus": 1.5
+  }
+}
