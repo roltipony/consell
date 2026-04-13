@@ -1,0 +1,43 @@
+# ─── Godot 4 generated files ──────────────────────────────────────
+.godot/
+*.uid
+
+# ─── Export & build output ────────────────────────────────────────
+exports/
+builds/
+*.pck
+*.apk
+*.aab
+*.ipa
+*.exe
+*.x86_64
+*.arm64
+*.wasm
+*.html
+
+# ─── Editor & OS metadata ─────────────────────────────────────────
+.import/
+*.import
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── User data (saves, settings generated at runtime) ─────────────
+user://
+*.cfg
+*.sav
+
+# ─── Python bytecode (used by helper scripts) ─────────────────────
+__pycache__/
+*.pyc
+*.pyo
+
+# ─── IDEs ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ─── Logs ─────────────────────────────────────────────────────────
+*.log
+logs/
