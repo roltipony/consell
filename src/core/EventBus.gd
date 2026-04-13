@@ -42,6 +42,7 @@ signal panel_open_requested(panel_id: String, data: Dictionary)
 signal panel_close_requested(panel_id: String)
 signal build_mode_entered(building_id: String)
 signal build_mode_exited()
+signal build_mode_rotate()   # ← NEW: rotate the ghost 90°
 
 # ─── Event / Disaster Signals ──────────────────────────────────────
 signal game_event_triggered(event_data: Dictionary)

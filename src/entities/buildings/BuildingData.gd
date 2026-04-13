@@ -64,5 +64,6 @@ static func from_dict(data: Dictionary) -> BuildingData:
 	bd.requires_water       = data.get("requires_water",       false)
 	bd.unlock_level         = data.get("unlock_level",         0)
 	bd.max_level            = data.get("max_level",            1)
-	bd.upgrade_costs        = Array(data.get("upgrade_costs",  []))
+	var raw_costs: Array = data.get("upgrade_costs", [])
+	bd.upgrade_costs.assign(raw_costs)
 	return bd

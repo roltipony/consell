@@ -2,19 +2,66 @@
 
 [ext_resource type="Script" path="res://src/ui/panels/BuildMenu.gd" id="1"]
 
-[node name="BuildMenu" type="PanelContainer"]
+[node name="BuildMenu" type="CanvasLayer"]
+
+[node name="Panel" type="PanelContainer" parent="."]
 script = ExtResource("1")
-visible = false
-offset_right = 300.0
-offset_bottom = 600.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -130.0
+offset_right = 420.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="Header" type="HBoxContainer" parent="."]
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 4.0
+offset_right = -6.0
+offset_bottom = -4.0
+theme_override_constants/separation = 4
 
-[node name="CloseButton" type="Button" parent="Header"]
-text = "✕"
+[node name="CategoryTabs" type="TabBar" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+clip_tabs = false
 
-[node name="TabContainer" type="TabContainer" parent="."]
-offset_top = 40.0
-offset_right = 300.0
-offset_bottom = 600.0
+[node name="Scroll" type="ScrollContainer" parent="Panel/VBox"]
+layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="BtnRow" type="HBoxContainer" parent="Panel/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 1
+theme_override_constants/separation = 6
+
+[node name="BottomRow" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SelectedLabel" type="Label" parent="Panel/VBox/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Selecciona un edificio"
+vertical_alignment = 1
+
+[node name="RotateButton" type="Button" parent="Panel/VBox/BottomRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 0)
+text = "↻ Rotar (R)"
+
+[node name="CancelButton" type="Button" parent="Panel/VBox/BottomRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(90, 0)
+text = "✕ Cancelar"
