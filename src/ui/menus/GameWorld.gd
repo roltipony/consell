@@ -34,9 +34,17 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mb: InputEventMouseButton = event as InputEventMouseButton
 		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
-			if not get_viewport().is_input_handled():
+			if not _is_mouse_over_ui():
 				building_placer.try_place_at_mouse()
 
 	if event.is_action_pressed("pause_game"):
-		if not get_viewport().is_input_handled():
+		if not _is_mouse_over_ui():
 			GameManager.pause(not GameManager.is_paused)
+
+func _is_mouse_over_ui() -> bool:
+	var mouse_pos: Vector2 = get_viewport().get_mouse_position()
+	for node in get_tree().get_nodes_in_group("ui_panels"):
+		if node is Control and node.is_visible_in_tree():
+			if node.get_global_rect().has_point(mouse_pos):
+				return true
+	return false

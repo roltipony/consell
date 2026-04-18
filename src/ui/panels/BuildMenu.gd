@@ -16,6 +16,8 @@ var _active_cat: int = 0
 var _selected_id: String = ""
 
 func _ready() -> void:
+	add_to_group("ui_panels")
+
 	EventBus.build_mode_entered.connect(_on_build_mode_entered)
 	EventBus.build_mode_exited.connect(_on_build_mode_exited)
 	EventBus.panel_open_requested.connect(_on_panel_open)
