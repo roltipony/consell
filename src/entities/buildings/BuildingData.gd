@@ -1,6 +1,5 @@
 ## BuildingData.gd
 ## Resource that holds all static data for a building type.
-## Instances are created at runtime from ConfigLoader JSON data.
 class_name BuildingData
 extends Resource
 
@@ -8,16 +7,16 @@ extends Resource
 @export var id: String = ""
 @export var display_name: String = ""
 @export var description: String = ""
-@export var category: String = ""       # "residential", "commercial", "civic", etc.
+@export var category: String = ""
 @export var icon_path: String = ""
-@export var scene_path: String = ""     # Path to the building's scene file
+@export var scene_path: String = ""
 
 # ─── Grid ─────────────────────────────────────────────────────────
-@export var size: Vector2i = Vector2i(1, 1)   # Tiles occupied (width, height)
+@export var size: Vector2i = Vector2i(1, 1)
 
 # ─── Cost & Upkeep ────────────────────────────────────────────────
 @export var build_cost: int = 0
-@export var demolish_refund: int = 0    # Gold returned on demolish
+@export var demolish_refund: int = 0
 @export var upkeep_per_tick: int = 0
 
 # ─── Production / Effects ─────────────────────────────────────────
@@ -25,8 +24,8 @@ extends Resource
 @export var population_capacity: int = 0
 @export var jobs_provided: int = 0
 @export var happiness_modifier: float = 0.0
-@export var resource_production: Dictionary = {}  # { resource_id: amount_per_tick }
-@export var resource_consumption: Dictionary = {} # { resource_id: amount_per_tick }
+@export var resource_production: Dictionary = {}
+@export var resource_consumption: Dictionary = {}
 
 # ─── Requirements ─────────────────────────────────────────────────
 @export var requires_road: bool = false
@@ -36,10 +35,12 @@ extends Resource
 
 # ─── Upgrades ─────────────────────────────────────────────────────
 @export var max_level: int = 1
-@export var upgrade_costs: Array[int] = []        # Cost per upgrade level
+@export var upgrade_costs: Array[int] = []
+
+# ─── 3D Visual ────────────────────────────────────────────────────
+@export var mesh_config: Dictionary = {}
 
 # ─── Factory ──────────────────────────────────────────────────────
-## Create a BuildingData from a raw config dictionary (from ConfigLoader).
 static func from_dict(data: Dictionary) -> BuildingData:
 	var bd := BuildingData.new()
 	bd.id                   = data.get("id",                   "")
@@ -64,6 +65,7 @@ static func from_dict(data: Dictionary) -> BuildingData:
 	bd.requires_water       = data.get("requires_water",       false)
 	bd.unlock_level         = data.get("unlock_level",         0)
 	bd.max_level            = data.get("max_level",            1)
-	var raw_costs: Array = data.get("upgrade_costs", [])
+	var raw_costs: Array    = data.get("upgrade_costs",        [])
 	bd.upgrade_costs.assign(raw_costs)
+	bd.mesh_config          = data.get("mesh",                 {})
 	return bd

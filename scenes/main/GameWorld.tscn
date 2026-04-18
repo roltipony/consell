@@ -5,33 +5,26 @@
 [ext_resource type="Script" uid="uid://cdnd7t602f7vp" path="res://src/systems/grid/BuildingPlacer.gd" id="3"]
 [ext_resource type="Script" uid="uid://6xqxlvsbgqep" path="res://src/systems/grid/GridSystem.gd" id="4"]
 [ext_resource type="Script" uid="uid://dfkddjp7lhd2t" path="res://src/systems/economy/EconomySystem.gd" id="5"]
-[ext_resource type="Texture2D" uid="uid://cv6nvo02b0ftv" path="res://assets/textures/terrain/grass.png" id="5_imw2n"]
 [ext_resource type="Script" uid="uid://bmlk7sulvqeum" path="res://src/systems/population/PopulationSystem.gd" id="6"]
 [ext_resource type="Script" uid="uid://4w5340x2hm5b" path="res://src/systems/events/EventSystem.gd" id="7"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_imw2n"]
-texture = ExtResource("5_imw2n")
-
-[sub_resource type="TileSet" id="TileSet_p8pkv"]
-tile_shape = 1
-sources/0 = SubResource("TileSetAtlasSource_imw2n")
-
-[node name="GameWorld" type="Node2D" unique_id=1951626949]
+[node name="GameWorld" type="Node3D" unique_id=1951626949]
 script = ExtResource("1")
 
-[node name="CameraController" type="Camera2D" parent="." unique_id=1166266291]
-script = ExtResource("2")
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1852314062]
+transform = Transform3D(0.707107, -0.408248, 0.57735, 0, 0.816497, 0.57735, -0.707107, -0.408248, 0.57735, 0, 20, 0)
+light_energy = 1.2
+shadow_enabled = true
 
-[node name="BuildingPlacer" type="Node2D" parent="." unique_id=1504491929]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=569165671]
+
+[node name="BuildingPlacer" type="Node3D" parent="." unique_id=1504491929]
 script = ExtResource("3")
 
 [node name="Systems" type="Node" parent="." unique_id=1563718117]
 
-[node name="GridSystem" type="Node" parent="Systems" unique_id=310351676]
+[node name="GridSystem" type="Node3D" parent="Systems" unique_id=310351676]
 script = ExtResource("4")
-
-[node name="TileMapLayer" type="TileMapLayer" parent="Systems/GridSystem" unique_id=881308870]
-tile_set = SubResource("TileSet_p8pkv")
 
 [node name="EconomySystem" type="Node" parent="Systems" unique_id=1123921089]
 script = ExtResource("5")
@@ -41,3 +34,6 @@ script = ExtResource("6")
 
 [node name="EventSystem" type="Node" parent="Systems" unique_id=696274461]
 script = ExtResource("7")
+
+[node name="CameraController" type="Node3D" parent="." unique_id=1107802135]
+script = ExtResource("2")

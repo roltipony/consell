@@ -1,7 +1,5 @@
 ## GameWorld.gd
-## Root script for the in-game scene.  Instantiates and wires together
-## all systems, then starts the game.
-extends Node2D
+extends Node3D
 
 const HUD_SCENE        := "res://scenes/ui/HUD.tscn"
 const BUILD_MENU_SCENE := "res://scenes/ui/BuildMenu.tscn"
@@ -19,8 +17,6 @@ func _ready() -> void:
 	EventBus.emit_signal("game_started")
 
 func _register_systems() -> void:
-	# Systems register themselves in their own _ready(),
-	# but we ensure ordering is correct by calling here too.
 	pass
 
 func _load_ui() -> void:
@@ -34,6 +30,13 @@ func _add_ui_scene(path: String) -> void:
 		return
 	add_child(scene.instantiate())
 
-func _unhandled_key_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb: InputEventMouseButton = event as InputEventMouseButton
+		if mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT:
+			if not get_viewport().is_input_handled():
+				building_placer.try_place_at_mouse()
+
 	if event.is_action_pressed("pause_game"):
-		GameManager.pause(not GameManager.is_paused)
+		if not get_viewport().is_input_handled():
+			GameManager.pause(not GameManager.is_paused)

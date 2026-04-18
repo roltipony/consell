@@ -1,17 +1,16 @@
 {
   "grid": {
-    "width": 64,
-    "height": 64,
-    "cell_size": [
-      64,
-      32
-    ]
+    "width": 20,
+    "height": 20,
+    "cell_size": 2.0
   },
   "camera": {
-    "move_speed": 400.0,
-    "zoom_speed": 0.1,
-    "zoom_min": 0.3,
-    "zoom_max": 3.0,
+    "move_speed": 20.0,
+    "zoom_speed": 3.0,
+    "zoom_min": 8.0,
+    "zoom_max": 60.0,
+    "distance": 30.0,
+    "fov": 45,
     "edge_scroll": true,
     "edge_margin": 20
   },

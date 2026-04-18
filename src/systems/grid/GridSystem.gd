@@ -1,40 +1,93 @@
 ## GridSystem.gd
 ## Manages the city grid: cell occupancy, zone types, road network,
-## placement validation, and initial map generation.
+## placement validation, and procedural 3D ground generation.
 class_name GridSystem
-extends Node
+extends Node3D
 
 const CFG_KEY := "grid"
 
 # ── State ─────────────────────────────────────────────────────────
-var grid_width:  int = 64
-var grid_height: int = 64
-var cell_size:   Vector2i = Vector2i(64, 32)
+var grid_width: int  = 20
+var grid_height: int = 20
+var cell_size: float = 2.0
 
-var buildings:  Dictionary = {}   # Vector2i → Building
-var zones:      Dictionary = {}   # Vector2i → String
-var road_cells: Dictionary = {}   # Vector2i → true
-
-# ── Node refs ─────────────────────────────────────────────────────
-@onready var tilemap: TileMapLayer = $TileMapLayer
+var buildings: Dictionary  = {}  # Vector2i → Building
+var zones: Dictionary      = {}  # Vector2i → String
+var road_cells: Dictionary = {}  # Vector2i → true
 
 # ── Lifecycle ─────────────────────────────────────────────────────
 func _ready() -> void:
 	_load_config()
 	GameManager.register_system("grid", self)
-	_run_map_generator()
+	_build_ground()
 
 func _load_config() -> void:
 	var cfg: Dictionary = ConfigLoader.game_settings.get(CFG_KEY, {})
 	grid_width  = cfg.get("width",     grid_width)
 	grid_height = cfg.get("height",    grid_height)
-	var cs: Array = cfg.get("cell_size", [cell_size.x, cell_size.y])
-	cell_size   = Vector2i(int(cs[0]), int(cs[1]))
+	# cell_size puede venir como float o como Array legacy [64,32]
+	var raw = cfg.get("cell_size", cell_size)
+	if raw is Array:
+		cell_size = float(raw[0]) / 32.0  # normalizar: 64px → 2.0 unidades
+	else:
+		cell_size = float(raw)
 
-func _run_map_generator() -> void:
-	var gen: MapGenerator = MapGenerator.new()
-	add_child(gen)
-	gen.generate(tilemap, grid_width, grid_height)
+func _build_ground() -> void:
+	for x in range(grid_width):
+		for z in range(grid_height):
+			_spawn_ground_tile(x, z)
+
+func _spawn_ground_tile(x: int, z: int) -> void:
+	var tile := Node3D.new()
+	tile.name = "Tile_%d_%d" % [x, z]
+
+	# Plano de hierba con variación de color sutil
+	var grass := MeshInstance3D.new()
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(cell_size * 0.97, cell_size * 0.97)
+	grass.mesh = plane
+	var mat := StandardMaterial3D.new()
+	var v := randf_range(-0.04, 0.04)
+	mat.albedo_color = Color(0.22 + v, 0.55 + v, 0.12 + v)
+	mat.roughness = 1.0
+	grass.material_override = mat
+	tile.add_child(grass)
+
+	# Borde oscuro de celda
+	var border := MeshInstance3D.new()
+	var border_plane := PlaneMesh.new()
+	border_plane.size = Vector2(cell_size, cell_size)
+	border.mesh = border_plane
+	var bmat := StandardMaterial3D.new()
+	bmat.albedo_color = Color(0.08, 0.28, 0.04)
+	bmat.roughness = 1.0
+	border.material_override = bmat
+	border.position.y = -0.001
+	tile.add_child(border)
+
+	tile.position = cell_to_world(Vector2i(x, z))
+	add_child(tile)
+
+# ── Coordinate helpers ────────────────────────────────────────────
+func cell_to_world(cell: Vector2i) -> Vector3:
+	return Vector3(
+		cell.x * cell_size + cell_size * 0.5,
+		0.0,
+		cell.y * cell_size + cell_size * 0.5
+	)
+
+func world_to_cell(world_pos: Vector3) -> Vector2i:
+	return Vector2i(
+		int(world_pos.x / cell_size),
+		int(world_pos.z / cell_size)
+	)
+
+func get_grid_center() -> Vector3:
+	return Vector3(
+		grid_width  * cell_size * 0.5,
+		0.0,
+		grid_height * cell_size * 0.5
+	)
 
 # ── Placement ─────────────────────────────────────────────────────
 func can_place(building_data: BuildingData, origin: Vector2i) -> bool:
@@ -50,7 +103,11 @@ func can_place(building_data: BuildingData, origin: Vector2i) -> bool:
 	return true
 
 func place_building(building_data: BuildingData, origin: Vector2i, building_node: Building) -> void:
-	assert(can_place(building_data, origin), "Tried to place building on occupied/invalid cell")
+	if not can_place(building_data, origin):
+		push_warning("GridSystem: can_place false en origin %s" % str(origin))
+		return
+	building_node.position = cell_to_world(origin)
+	add_child(building_node)
 	for dx in range(building_data.size.x):
 		for dy in range(building_data.size.y):
 			buildings[origin + Vector2i(dx, dy)] = building_node
@@ -92,14 +149,6 @@ func get_building_at(cell: Vector2i) -> Building:
 func is_cell_free(cell: Vector2i) -> bool:
 	return not buildings.has(cell) and _in_bounds(cell)
 
-func world_to_cell(world_pos: Vector2) -> Vector2i:
-	var x: int = int(world_pos.x / cell_size.x)
-	var y: int = int(world_pos.y / cell_size.y)
-	return Vector2i(x, y)
-
-func cell_to_world(cell: Vector2i) -> Vector2:
-	return Vector2(cell.x * cell_size.x, cell.y * cell_size.y)
-
 # ── Internals ─────────────────────────────────────────────────────
 func _in_bounds(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.y >= 0 and cell.x < grid_width and cell.y < grid_height
@@ -123,15 +172,12 @@ func serialize() -> Dictionary:
 			continue
 		visited[bld] = true
 		buildings_data.append(bld.serialize())
-
 	var roads_data: Array = []
 	for c in road_cells:
 		roads_data.append([c.x, c.y])
-
 	var zones_data: Dictionary = {}
 	for c in zones:
 		zones_data["%d,%d" % [c.x, c.y]] = zones[c]
-
 	return {"buildings": buildings_data, "roads": roads_data, "zones": zones_data}
 
 func deserialize(data: Dictionary) -> void:

@@ -1,6 +1,5 @@
 ## SaveManager.gd
-## Handles serialisation and deserialisation of the full game state.
-## Save slots are stored under user://saves/slot_N.json
+## Handles saving and loading game state to JSON files in user://saves/
 extends Node
 
 const SAVE_DIR  := "user://saves/"
@@ -9,55 +8,62 @@ const SLOT_COUNT := 5
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(SAVE_DIR)
 
-# ─── Public API ───────────────────────────────────────────────────
-func save_game(slot: int) -> void:
-	assert(slot >= 0 and slot < SLOT_COUNT, "Invalid save slot")
-	var data := _collect_state()
-	var path := _slot_path(slot)
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	file.store_string(JSON.stringify(data, "\t"))
-	file.close()
-	EventBus.emit_signal("game_saved", slot)
-
-func load_game(slot: int) -> void:
-	assert(slot >= 0 and slot < SLOT_COUNT, "Invalid save slot")
-	var path := _slot_path(slot)
-	if not FileAccess.file_exists(path):
-		push_error("SaveManager: No save file at slot %d" % slot)
-		return
-	var file := FileAccess.open(path, FileAccess.READ)
-	var json := JSON.new()
-	json.parse(file.get_as_text())
-	file.close()
-	_apply_state(json.data)
-	EventBus.emit_signal("game_loaded", slot)
+# ── Public API ────────────────────────────────────────────────────
 
 func slot_exists(slot: int) -> bool:
 	return FileAccess.file_exists(_slot_path(slot))
+
+func save_game(slot: int) -> void:
+	var data: Dictionary = {}
+	if GameManager.economy_system:
+		data["economy"] = GameManager.economy_system.serialize()
+	if GameManager.population_system:
+		data["population"] = GameManager.population_system.serialize()
+	if GameManager.grid_system:
+		data["grid"] = GameManager.grid_system.serialize()
+	data["game_time"] = GameManager.game_time.serialize()
+
+	var file := FileAccess.open(_slot_path(slot), FileAccess.WRITE)
+	if file == null:
+		push_error("SaveManager: Cannot open slot %d for writing." % slot)
+		return
+	file.store_string(JSON.stringify(data, "\t"))
+	file.close()
+	EventBus.emit_signal("game_saved", slot)
+	print("SaveManager: Game saved to slot %d." % slot)
+
+func load_game(slot: int) -> void:
+	if not slot_exists(slot):
+		push_warning("SaveManager: Slot %d does not exist." % slot)
+		return
+	var file := FileAccess.open(_slot_path(slot), FileAccess.READ)
+	if file == null:
+		push_error("SaveManager: Cannot open slot %d for reading." % slot)
+		return
+	var json := JSON.new()
+	var err  := json.parse(file.get_as_text())
+	file.close()
+	if err != OK:
+		push_error("SaveManager: Failed to parse slot %d." % slot)
+		return
+	var data: Dictionary = json.data
+	if GameManager.economy_system and data.has("economy"):
+		GameManager.economy_system.deserialize(data["economy"])
+	if GameManager.population_system and data.has("population"):
+		GameManager.population_system.deserialize(data["population"])
+	if GameManager.grid_system and data.has("grid"):
+		GameManager.grid_system.deserialize(data["grid"])
+	if data.has("game_time"):
+		GameManager.game_time.deserialize(data["game_time"])
+	EventBus.emit_signal("game_loaded", slot)
+	print("SaveManager: Game loaded from slot %d." % slot)
 
 func delete_slot(slot: int) -> void:
 	var path := _slot_path(slot)
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(path)
 
-# ─── Internals ────────────────────────────────────────────────────
+# ── Internal ──────────────────────────────────────────────────────
+
 func _slot_path(slot: int) -> String:
 	return SAVE_DIR + "slot_%d.json" % slot
-
-func _collect_state() -> Dictionary:
-	return {
-		"version":    ProjectSettings.get_setting("application/config/version"),
-		"time":       GameManager.game_time.to_dict(),
-		"economy":    GameManager.economy_system.serialize()    if GameManager.economy_system    else {},
-		"population": GameManager.population_system.serialize() if GameManager.population_system else {},
-		"grid":       GameManager.grid_system.serialize()       if GameManager.grid_system       else {},
-	}
-
-func _apply_state(data: Dictionary) -> void:
-	GameManager.game_time.from_dict(data.get("time", {}))
-	if GameManager.economy_system    and data.has("economy"):
-		GameManager.economy_system.deserialize(data["economy"])
-	if GameManager.population_system and data.has("population"):
-		GameManager.population_system.deserialize(data["population"])
-	if GameManager.grid_system       and data.has("grid"):
-		GameManager.grid_system.deserialize(data["grid"])

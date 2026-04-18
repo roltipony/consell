@@ -1,37 +1,25 @@
 ## Notification.gd
-## Toast notification that auto-dismisses after a duration.
+## Temporary toast notification shown in the HUD.
 extends PanelContainer
 
-const COLORS: Dictionary = {
-	"info":    Color(0.2, 0.5, 0.9),
-	"success": Color(0.2, 0.75, 0.3),
-	"warning": Color(0.95, 0.7, 0.1),
-	"error":   Color(0.9, 0.2, 0.2),
-}
-const DISPLAY_SECONDS := 3.5
+@onready var lbl: Label = $MarginContainer/Label
+@onready var anim: AnimationPlayer = $AnimationPlayer
 
-@onready var label:    Label           = $MarginContainer/Label
-@onready var animator: AnimationPlayer = $AnimationPlayer
+const COLORS := {
+	"info":    Color(0.2, 0.6, 1.0),
+	"success": Color(0.2, 0.9, 0.3),
+	"warning": Color(1.0, 0.8, 0.1),
+	"error":   Color(1.0, 0.2, 0.2),
+}
 
 func show_message(message: String, type: String = "info") -> void:
-	if label: label.text = message
-	var col: Color = COLORS.get(type, COLORS["info"])
-	add_theme_stylebox_override("panel", _make_style(col))
-	if animator:
-		animator.play("fade_in_out")
+	if lbl:
+		lbl.text = message
+		lbl.add_theme_color_override("font_color", COLORS.get(type, COLORS["info"]))
+	visible = true
+	if anim and anim.has_animation("fade_out"):
+		anim.play("fade_out")
 	else:
-		await get_tree().create_timer(DISPLAY_SECONDS).timeout
-		queue_free()
-
-func _make_style(color: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.set_corner_radius_all(6)
-	style.content_margin_left   = 12
-	style.content_margin_right  = 12
-	style.content_margin_top    = 8
-	style.content_margin_bottom = 8
-	return style
-
-func _on_animation_finished(_anim_name: String) -> void:
-	queue_free()
+		# Fallback: auto-hide after 3 seconds via timer
+		var t := get_tree().create_timer(3.0)
+		t.timeout.connect(queue_free)

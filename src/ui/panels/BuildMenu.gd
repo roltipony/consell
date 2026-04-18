@@ -1,25 +1,12 @@
 ## BuildMenu.gd
 ## Bottom-centered bar showing all available buildings grouped by category.
-## Click a building to enter placement mode; press R or click Rotate to rotate.
-##
-## Scene tree expected:
-##   CanvasLayer
-##     PanelContainer  ← this script lives here
-##       VBox (VBoxContainer)
-##         CategoryTabs (TabBar)
-##         Scroll (ScrollContainer)
-##           BtnRow (HBoxContainer)
-##         BottomRow (HBoxContainer)
-##           SelectedLabel (Label)
-##           RotateButton (Button)
-##           CancelButton (Button)
 extends PanelContainer
 
-@onready var category_tabs: TabBar          = $VBox/CategoryTabs
-@onready var btn_row:       HBoxContainer   = $VBox/Scroll/BtnRow
-@onready var lbl_selected:  Label           = $VBox/BottomRow/SelectedLabel
-@onready var btn_rotate:    Button          = $VBox/BottomRow/RotateButton
-@onready var btn_cancel:    Button          = $VBox/BottomRow/CancelButton
+@onready var category_tabs: TabBar        = $VBox/CategoryTabs
+@onready var btn_row:       HBoxContainer = $VBox/Scroll/BtnRow
+@onready var lbl_selected:  Label         = $VBox/BottomRow/SelectedLabel
+@onready var btn_rotate:    Button        = $VBox/BottomRow/RotateButton
+@onready var btn_cancel:    Button        = $VBox/BottomRow/CancelButton
 
 const BUILD_BUTTON_SCENE := "res://scenes/ui/BuildButton.tscn"
 
@@ -34,8 +21,8 @@ func _ready() -> void:
 	EventBus.panel_open_requested.connect(_on_panel_open)
 	EventBus.panel_close_requested.connect(_on_panel_close)
 
-	if btn_rotate: btn_rotate.pressed.connect(_on_rotate_pressed)
-	if btn_cancel: btn_cancel.pressed.connect(_on_cancel_pressed)
+	if btn_rotate:    btn_rotate.pressed.connect(_on_rotate_pressed)
+	if btn_cancel:    btn_cancel.pressed.connect(_on_cancel_pressed)
 	if category_tabs: category_tabs.tab_changed.connect(_on_tab_changed)
 
 	_build_category_data()
@@ -79,7 +66,6 @@ func _create_button(bd_raw: Dictionary) -> Node:
 		btn.setup(bd_raw)
 		btn.pressed.connect(func(): _on_building_selected(bd_raw["id"]))
 		return btn
-	# Fallback: plain button if BuildButton.tscn not found
 	var btn := Button.new()
 	btn.text = "%s  💰%d" % [bd_raw.get("display_name", "?"), bd_raw.get("build_cost", 0)]
 	btn.pressed.connect(func(): _on_building_selected(bd_raw["id"]))
@@ -107,16 +93,11 @@ func _update_selected_label() -> void:
 	var raw: Dictionary = ConfigLoader.get_building(_selected_id)
 	lbl_selected.text = "📐 %s  —  R para rotar" % raw.get("display_name", _selected_id)
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if not visible: return
-	if event.is_action_pressed("rotate_building"):
-		_on_rotate_pressed()
-
 func _on_tab_changed(tab: int) -> void:
 	_show_category(tab)
 
 func _on_build_mode_entered(_id: String) -> void:
-	pass  # could highlight active button here
+	pass
 
 func _on_build_mode_exited() -> void:
 	_selected_id = ""

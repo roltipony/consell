@@ -53,3 +53,9 @@ func from_dict(data: Dictionary) -> void:
 
 func format_date() -> String:
 	return "Year %d, Month %d, Day %d — %02d:00" % [year, month, day, hour]
+
+func serialize() -> Dictionary:
+	return to_dict()
+
+func deserialize(data: Dictionary) -> void:
+	from_dict(data)

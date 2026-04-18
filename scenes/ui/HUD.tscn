@@ -2,41 +2,37 @@
 
 [ext_resource type="Script" path="res://src/ui/hud/HUD.gd" id="1"]
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUDLayer" type="CanvasLayer"]
+
+[node name="HUD" type="Control" parent="."]
 script = ExtResource("1")
-
-[node name="TopBar" type="HBoxContainer" parent="."]
 anchor_right = 1.0
+anchor_bottom = 1.0
 
-[node name="GoldLabel" type="Label" parent="TopBar"]
-text = "💰 0"
+[node name="TopBar" type="HBoxContainer" parent="HUD"]
+anchor_right = 1.0
+offset_bottom = 40.0
 
-[node name="PopulationLabel" type="Label" parent="TopBar"]
+[node name="GoldLabel" type="Label" parent="HUD/TopBar"]
+text = "💰 5000"
+custom_minimum_size = Vector2(120, 0)
+
+[node name="PopLabel" type="Label" parent="HUD/TopBar"]
 text = "👥 0"
+custom_minimum_size = Vector2(100, 0)
 
-[node name="HappinessLabel" type="Label" parent="TopBar"]
-text = "😐 0%"
+[node name="HappyLabel" type="Label" parent="HUD/TopBar"]
+text = "😊 75%"
+custom_minimum_size = Vector2(100, 0)
 
-[node name="DateLabel" type="Label" parent="TopBar"]
-text = "📅 Y1 M01 D01"
+[node name="TimeLabel" type="Label" parent="HUD/TopBar"]
+text = "📅 1/1/1"
+custom_minimum_size = Vector2(120, 0)
 
-[node name="SpeedBar" type="HBoxContainer" parent="."]
-offset_top = 40.0
-
-[node name="PauseButton" type="Button" parent="SpeedBar"]
-text = "⏸"
-
-[node name="SlowButton" type="Button" parent="SpeedBar"]
-text = "▶"
-
-[node name="NormalButton" type="Button" parent="SpeedBar"]
-text = "▶▶"
-
-[node name="FastButton" type="Button" parent="SpeedBar"]
-text = "▶▶▶"
-
-[node name="NotificationContainer" type="VBoxContainer" parent="."]
+[node name="NotificationContainer" type="VBoxContainer" parent="HUD"]
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+anchor_top = 1.0
 offset_left = -320.0
+offset_top = -200.0
