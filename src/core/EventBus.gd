@@ -13,6 +13,8 @@ signal resource_changed(resource_id: String, new_amount: float)
 signal population_changed(new_population: int)
 signal happiness_changed(new_happiness: float)
 signal unemployment_changed(new_rate: float)
+signal citizen_spawned(citizen: Object, cell: Vector2i)
+signal citizen_despawned(citizen: Object, cell: Vector2i)
 
 # ─── Building Signals ──────────────────────────────────────────────
 signal building_placed(building_data: BuildingData, cell: Vector2i)

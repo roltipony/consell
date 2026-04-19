@@ -8,6 +8,7 @@ const BUILD_MENU_SCENE := "res://scenes/ui/BuildMenu.tscn"
 @onready var economy_system:    EconomySystem    = $Systems/EconomySystem
 @onready var population_system: PopulationSystem = $Systems/PopulationSystem
 @onready var event_system:      EventSystem      = $Systems/EventSystem
+@onready var citizen_manager:   CitizenManager   = $Systems/CitizenManager
 @onready var building_placer:   BuildingPlacer   = $BuildingPlacer
 @onready var camera:            CameraController = $CameraController
 

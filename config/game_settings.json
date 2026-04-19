@@ -32,5 +32,12 @@
     "forest_threshold": 0.25,
     "sand_threshold": -0.2,
     "fertile_threshold": 0.1
+  },
+  "citizens": {
+    "move_speed": 1.5,
+    "wander_radius": 3.0,
+    "wait_duration": 2.0,
+    "color": "#e8c090",
+    "palette": ["#e8c090", "#c89060", "#a06030", "#f0d0a0", "#d0a070"]
   }
 }
