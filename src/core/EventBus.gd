@@ -15,6 +15,7 @@ signal happiness_changed(new_happiness: float)
 signal unemployment_changed(new_rate: float)
 signal citizen_spawned(citizen: Object, cell: Vector2i)
 signal citizen_despawned(citizen: Object, cell: Vector2i)
+signal citizen_assigned_job(citizen: Object, work_cell: Vector2i, job_type: String)
 
 # ─── Time Signals ──────────────────────────────────────────────────
 signal hour_changed(hour: int)

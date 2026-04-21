@@ -4,7 +4,7 @@
     "display_name": "Food",
     "description": "Sustains the population. Shortage causes unhappiness.",
     "icon_path": "res://assets/icons/resource_food.png",
-    "starting_amount": 50,
+    "starting_amount": 0,
     "max_storage": 500,
     "critical_threshold": 10,
     "happiness_penalty_per_unit_below_threshold": -0.05

@@ -38,11 +38,41 @@
     "wander_radius": 3.0,
     "wait_duration": 2.0,
     "color": "#e8c090",
-    "farmer_work_color": "#a0c840",
-    "palette": ["#e8c090", "#c89060", "#a06030", "#f0d0a0", "#d0a070"]
+    "palette": [
+      "#e8c090",
+      "#c89060",
+      "#a06030",
+      "#f0d0a0",
+      "#d0a070"
+    ],
+    "farmer_work_color": "#a0c840"
   },
   "day_cycle": {
     "work_start_hour": 6,
     "work_end_hour": 20
+  },
+  "citizen_job_types": {
+    "generic": [
+      "wheat_field",
+      "farm"
+    ],
+    "merchant": [
+      "market",
+      "tavern"
+    ],
+    "guard": [
+      "guard_post"
+    ]
+  },
+  "citizen_job_colors": {
+    "wheat_field": "#d4a820",
+    "farm": "#88aa22",
+    "market": "#2255cc",
+    "tavern": "#aa5511",
+    "guard_post": "#888888"
+  },
+  "citizen_type_classes": {
+    "farmer": "FarmerCitizen",
+    "generic": "Citizen"
   }
 }

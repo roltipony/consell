@@ -6,7 +6,10 @@
     "category": "residential",
     "icon_path": "res://assets/textures/buildings/tent.png",
     "scene_path": "res://scenes/buildings/Tent.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 50,
     "demolish_refund": 20,
     "upkeep_per_tick": 0,
@@ -23,7 +26,15 @@
     "unlock_level": 0,
     "max_level": 1,
     "upgrade_costs": [],
-    "mesh": { "type": "prism", "size": [1.6, 1.8, 1.6], "color": "#c8a020" }
+    "mesh": {
+      "type": "prism",
+      "size": [
+        1.6,
+        1.8,
+        1.6
+      ],
+      "color": "#c8a020"
+    }
   },
   "cottage": {
     "id": "cottage",
@@ -32,7 +43,10 @@
     "category": "residential",
     "icon_path": "res://assets/textures/buildings/cottage.png",
     "scene_path": "res://scenes/buildings/Cottage.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 150,
     "demolish_refund": 60,
     "upkeep_per_tick": 1,
@@ -48,8 +62,19 @@
     "requires_water": false,
     "unlock_level": 0,
     "max_level": 3,
-    "upgrade_costs": [200, 400],
-    "mesh": { "type": "box", "size": [1.7, 2.0, 1.7], "color": "#cc2222" }
+    "upgrade_costs": [
+      200,
+      400
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        1.7,
+        2.0,
+        1.7
+      ],
+      "color": "#cc2222"
+    }
   },
   "wheat_field": {
     "id": "wheat_field",
@@ -58,7 +83,10 @@
     "category": "production",
     "icon_path": "res://assets/textures/buildings/wheat_field.png",
     "scene_path": "res://scenes/buildings/WheatField.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 80,
     "demolish_refund": 20,
     "upkeep_per_tick": 0,
@@ -75,7 +103,15 @@
     "unlock_level": 0,
     "max_level": 1,
     "upgrade_costs": [],
-    "mesh": { "type": "box", "size": [1.8, 0.15, 1.8], "color": "#d4a820" }
+    "mesh": {
+      "type": "box",
+      "size": [
+        1.8,
+        0.15,
+        1.8
+      ],
+      "color": "#d4a820"
+    }
   },
   "market": {
     "id": "market",
@@ -84,7 +120,10 @@
     "category": "commercial",
     "icon_path": "res://assets/textures/buildings/market.png",
     "scene_path": "res://scenes/buildings/Market.tscn",
-    "size": [2, 2],
+    "size": [
+      2,
+      2
+    ],
     "build_cost": 300,
     "demolish_refund": 100,
     "upkeep_per_tick": 3,
@@ -93,15 +132,27 @@
     "citizen_type": "generic",
     "jobs_provided": 6,
     "happiness_modifier": 0.1,
-    "resource_production": { "gold_coins": 8 },
+    "resource_production": {
+      "gold_coins": 8
+    },
     "resource_consumption": {},
     "requires_road": true,
     "requires_power": false,
     "requires_water": false,
     "unlock_level": 0,
     "max_level": 2,
-    "upgrade_costs": [500],
-    "mesh": { "type": "box", "size": [3.6, 3.0, 3.6], "color": "#2255cc" }
+    "upgrade_costs": [
+      500
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        3.6,
+        3.0,
+        3.6
+      ],
+      "color": "#2255cc"
+    }
   },
   "farm": {
     "id": "farm",
@@ -110,7 +161,10 @@
     "category": "production",
     "icon_path": "res://assets/textures/buildings/farm.png",
     "scene_path": "res://scenes/buildings/Farm.tscn",
-    "size": [2, 2],
+    "size": [
+      2,
+      2
+    ],
     "build_cost": 200,
     "demolish_refund": 80,
     "upkeep_per_tick": 2,
@@ -119,15 +173,28 @@
     "citizen_type": "generic",
     "jobs_provided": 4,
     "happiness_modifier": 0.0,
-    "resource_production": { "food": 10 },
+    "resource_production": {
+      "food": 10
+    },
     "resource_consumption": {},
     "requires_road": false,
     "requires_power": false,
     "requires_water": false,
     "unlock_level": 0,
     "max_level": 3,
-    "upgrade_costs": [250, 500],
-    "mesh": { "type": "box", "size": [3.6, 1.2, 3.6], "color": "#88aa22" }
+    "upgrade_costs": [
+      250,
+      500
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        3.6,
+        1.2,
+        3.6
+      ],
+      "color": "#88aa22"
+    }
   },
   "well": {
     "id": "well",
@@ -136,7 +203,10 @@
     "category": "infrastructure",
     "icon_path": "res://assets/textures/buildings/well.png",
     "scene_path": "res://scenes/buildings/Well.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 100,
     "demolish_refund": 30,
     "upkeep_per_tick": 1,
@@ -145,15 +215,24 @@
     "citizen_type": "generic",
     "jobs_provided": 1,
     "happiness_modifier": 0.05,
-    "resource_production": { "water": 20 },
+    "resource_production": {
+      "water": 20
+    },
     "resource_consumption": {},
     "requires_road": false,
     "requires_power": false,
     "requires_water": false,
     "unlock_level": 0,
     "max_level": 2,
-    "upgrade_costs": [150],
-    "mesh": { "type": "cylinder", "radius": 0.5, "height": 1.2, "color": "#8888cc" }
+    "upgrade_costs": [
+      150
+    ],
+    "mesh": {
+      "type": "cylinder",
+      "radius": 0.5,
+      "height": 1.2,
+      "color": "#8888cc"
+    }
   },
   "road": {
     "id": "road",
@@ -162,7 +241,10 @@
     "category": "infrastructure",
     "icon_path": "res://assets/textures/buildings/road.png",
     "scene_path": "res://scenes/buildings/Road.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 10,
     "demolish_refund": 4,
     "upkeep_per_tick": 0,
@@ -179,7 +261,15 @@
     "unlock_level": 0,
     "max_level": 1,
     "upgrade_costs": [],
-    "mesh": { "type": "box", "size": [1.9, 0.1, 1.9], "color": "#555555" }
+    "mesh": {
+      "type": "box",
+      "size": [
+        1.9,
+        0.1,
+        1.9
+      ],
+      "color": "#555555"
+    }
   },
   "tavern": {
     "id": "tavern",
@@ -188,7 +278,10 @@
     "category": "civic",
     "icon_path": "res://assets/textures/buildings/tavern.png",
     "scene_path": "res://scenes/buildings/Tavern.tscn",
-    "size": [2, 1],
+    "size": [
+      2,
+      1
+    ],
     "build_cost": 250,
     "demolish_refund": 90,
     "upkeep_per_tick": 4,
@@ -198,14 +291,26 @@
     "jobs_provided": 3,
     "happiness_modifier": 0.2,
     "resource_production": {},
-    "resource_consumption": { "food": 2 },
+    "resource_consumption": {
+      "food": 2
+    },
     "requires_road": true,
     "requires_power": false,
     "requires_water": false,
     "unlock_level": 1,
     "max_level": 2,
-    "upgrade_costs": [350],
-    "mesh": { "type": "box", "size": [3.6, 2.5, 1.7], "color": "#aa5511" }
+    "upgrade_costs": [
+      350
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        3.6,
+        2.5,
+        1.7
+      ],
+      "color": "#aa5511"
+    }
   },
   "guard_post": {
     "id": "guard_post",
@@ -214,7 +319,10 @@
     "category": "civic",
     "icon_path": "res://assets/textures/buildings/guard_post.png",
     "scene_path": "res://scenes/buildings/GuardPost.tscn",
-    "size": [1, 1],
+    "size": [
+      1,
+      1
+    ],
     "build_cost": 180,
     "demolish_refund": 60,
     "upkeep_per_tick": 5,
@@ -230,7 +338,14 @@
     "requires_water": false,
     "unlock_level": 1,
     "max_level": 2,
-    "upgrade_costs": [300],
-    "mesh": { "type": "cylinder", "radius": 0.65, "height": 5.0, "color": "#888888" }
+    "upgrade_costs": [
+      300
+    ],
+    "mesh": {
+      "type": "cylinder",
+      "radius": 0.65,
+      "height": 5.0,
+      "color": "#888888"
+    }
   }
 }

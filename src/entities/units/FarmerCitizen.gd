@@ -28,7 +28,6 @@ const CTX_GOING_HOME      := "going_home"
 # ─── Data ────────────────────────────────────────────────────────
 var assigned_field_cell: Vector2i = Vector2i(-1, -1)
 var _work_color: Color = Color.WHITE
-var _rest_color: Color = Color.WHITE
 
 # ─── Lifecycle ────────────────────────────────────────────────────
 func _ready() -> void:
@@ -39,8 +38,6 @@ func _ready() -> void:
 func initialize(cell: Vector2i, cfg: Dictionary) -> void:
 	super.initialize(cell, cfg)
 	_work_color = Color(cfg.get("farmer_work_color", "#a0c840"))
-	_rest_color = Color(cfg.get("color",             "#e8c090"))
-	set_color(_rest_color)
 
 # ─── Context update ───────────────────────────────────────────────
 func _update_context() -> void:
@@ -116,7 +113,6 @@ func _action_go_home(c: Dictionary) -> BTNode.Status:
 		c[CTX_GOING_HOME]     = true
 		c[CTX_IS_WORKING]     = false
 		c[CTX_GOING_TO_FIELD] = false
-		set_color(_rest_color)
 		move_to(GameManager.grid_system.cell_to_world(home_cell))
 	if is_moving():
 		return BTNode.Status.RUNNING
