@@ -1,12 +1,13 @@
 ## BuildButton.gd
 ## A button in the BuildMenu showing icon, name and cost of a building.
+## setup() must be called after the node is added to the scene tree.
 extends Button
 
-@onready var icon_texture: TextureRect = $HBoxContainer/Icon
-@onready var lbl_name:     Label       = $HBoxContainer/VBox/NameLabel
-@onready var lbl_cost:     Label       = $HBoxContainer/VBox/CostLabel
-
 func setup(bd_raw: Dictionary) -> void:
+	var lbl_name:     Label       = get_node_or_null("HBoxContainer/VBox/NameLabel")
+	var lbl_cost:     Label       = get_node_or_null("HBoxContainer/VBox/CostLabel")
+	var icon_texture: TextureRect = get_node_or_null("HBoxContainer/Icon")
+
 	if lbl_name: lbl_name.text = bd_raw.get("display_name", "?")
 	if lbl_cost: lbl_cost.text = "💰 %d" % bd_raw.get("build_cost", 0)
 

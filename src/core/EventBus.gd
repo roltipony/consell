@@ -16,6 +16,11 @@ signal unemployment_changed(new_rate: float)
 signal citizen_spawned(citizen: Object, cell: Vector2i)
 signal citizen_despawned(citizen: Object, cell: Vector2i)
 
+# ─── Time Signals ──────────────────────────────────────────────────
+signal hour_changed(hour: int)
+signal wheat_field_registered(cell: Vector2i)
+signal wheat_field_unregistered(cell: Vector2i)
+
 # ─── Building Signals ──────────────────────────────────────────────
 signal building_placed(building_data: BuildingData, cell: Vector2i)
 signal building_removed(building_data: BuildingData, cell: Vector2i)

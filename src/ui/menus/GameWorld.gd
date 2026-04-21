@@ -4,13 +4,14 @@ extends Node3D
 const HUD_SCENE        := "res://scenes/ui/HUD.tscn"
 const BUILD_MENU_SCENE := "res://scenes/ui/BuildMenu.tscn"
 
-@onready var grid_system:       GridSystem       = $Systems/GridSystem
-@onready var economy_system:    EconomySystem    = $Systems/EconomySystem
-@onready var population_system: PopulationSystem = $Systems/PopulationSystem
-@onready var event_system:      EventSystem      = $Systems/EventSystem
-@onready var citizen_manager:   CitizenManager   = $Systems/CitizenManager
-@onready var building_placer:   BuildingPlacer   = $BuildingPlacer
-@onready var camera:            CameraController = $CameraController
+@onready var grid_system:          GridSystem          = $Systems/GridSystem
+@onready var economy_system:       EconomySystem       = $Systems/EconomySystem
+@onready var population_system:    PopulationSystem    = $Systems/PopulationSystem
+@onready var event_system:         EventSystem         = $Systems/EventSystem
+@onready var citizen_manager:      CitizenManager      = $Systems/CitizenManager
+@onready var wheat_field_registry: WheatFieldRegistry  = $Systems/WheatFieldRegistry
+@onready var building_placer:      BuildingPlacer      = $BuildingPlacer
+@onready var camera:               CameraController    = $CameraController
 
 func _ready() -> void:
 	_register_systems()

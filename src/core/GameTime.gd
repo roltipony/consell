@@ -17,6 +17,7 @@ var year: int = 1
 func advance_tick() -> void:
 	tick += 1
 	hour = tick % TICKS_PER_DAY
+	EventBus.emit_signal("hour_changed", hour)
 
 	if tick % TICKS_PER_DAY == 0:
 		_advance_day()

@@ -31,8 +31,23 @@ func _load_config() -> void:
 # ─── Tick ─────────────────────────────────────────────────────────
 func process_tick() -> void:
 	_recalculate_flows()
+	_convert_resources()
 	var delta := income - expenses
 	add_gold(delta)
+
+func _convert_resources() -> void:
+	## Convert sub-resources into their parent resource each tick.
+	## Reads food_value from resources.json for each resource that declares it.
+	for rid in ConfigLoader.resources:
+		var rdata: Dictionary = ConfigLoader.resources[rid]
+		var food_value: float = float(rdata.get("food_value", 0.0))
+		if food_value <= 0.0:
+			continue
+		var amount: float = resources.get(rid, 0.0)
+		if amount <= 0.0:
+			continue
+		add_resource("food", amount * food_value)
+		add_resource(rid, -amount)
 
 func _recalculate_flows() -> void:
 	income   = 0

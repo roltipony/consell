@@ -38,6 +38,11 @@
     "wander_radius": 3.0,
     "wait_duration": 2.0,
     "color": "#e8c090",
+    "farmer_work_color": "#a0c840",
     "palette": ["#e8c090", "#c89060", "#a06030", "#f0d0a0", "#d0a070"]
+  },
+  "day_cycle": {
+    "work_start_hour": 6,
+    "work_end_hour": 20
   }
 }

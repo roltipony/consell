@@ -14,6 +14,9 @@ extends Resource
 # ─── Grid ─────────────────────────────────────────────────────────
 @export var size: Vector2i = Vector2i(1, 1)
 
+# ─── Population ───────────────────────────────────────────────────
+@export var citizen_type: String = "generic"
+
 # ─── Cost & Upkeep ────────────────────────────────────────────────
 @export var build_cost: int = 0
 @export var demolish_refund: int = 0
@@ -51,6 +54,7 @@ static func from_dict(data: Dictionary) -> BuildingData:
 	bd.scene_path           = data.get("scene_path",           "")
 	var sz: Array           = data.get("size",                 [1, 1])
 	bd.size                 = Vector2i(sz[0], sz[1])
+	bd.citizen_type         = data.get("citizen_type",         "generic")
 	bd.build_cost           = data.get("build_cost",           0)
 	bd.demolish_refund      = data.get("demolish_refund",      0)
 	bd.upkeep_per_tick      = data.get("upkeep_per_tick",      0)

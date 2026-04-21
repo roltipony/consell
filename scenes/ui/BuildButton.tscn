@@ -4,21 +4,36 @@
 
 [node name="BuildButton" type="Button"]
 script = ExtResource("1")
-custom_minimum_size = Vector2(260, 48)
+custom_minimum_size = Vector2(120, 56)
+size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+mouse_filter = 2
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer"]
+layout_mode = 2
 custom_minimum_size = Vector2(32, 32)
+size_flags_vertical = 4
 expand_mode = 1
+stretch_mode = 6
 
 [node name="VBox" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="NameLabel" type="Label" parent="HBoxContainer/VBox"]
+layout_mode = 2
 text = "Building"
+autowrap_mode = 2
 
 [node name="CostLabel" type="Label" parent="HBoxContainer/VBox"]
+layout_mode = 2
 text = "💰 0"

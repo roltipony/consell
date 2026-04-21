@@ -1,5 +1,5 @@
 ## HUD.gd
-## In-game heads-up display: gold, population, citizens, happiness, time and notifications.
+## In-game heads-up display: gold, population, citizens, happiness, food, time and notifications.
 ##
 ## Scene tree expected:
 ##   CanvasLayer
@@ -9,6 +9,7 @@
 ##         PopLabel       (Label)
 ##         CitizensLabel  (Label)
 ##         HappyLabel     (Label)
+##         FoodLabel      (Label)
 ##         TimeLabel      (Label)
 ##       NotificationContainer (VBoxContainer)
 extends Control
@@ -17,6 +18,7 @@ extends Control
 @onready var lbl_pop:         Label         = $TopBar/PopLabel
 @onready var lbl_citizens:    Label         = $TopBar/CitizensLabel
 @onready var lbl_happy:       Label         = $TopBar/HappyLabel
+@onready var lbl_food:        Label         = $TopBar/FoodLabel
 @onready var lbl_time:        Label         = $TopBar/TimeLabel
 @onready var notif_container: VBoxContainer = $NotificationContainer
 
@@ -32,6 +34,7 @@ func _ready() -> void:
 	EventBus.hud_notification.connect(_on_notification)
 	EventBus.citizen_spawned.connect(_on_citizen_spawned)
 	EventBus.citizen_despawned.connect(_on_citizen_despawned)
+	EventBus.resource_changed.connect(_on_resource_changed)
 
 func _on_gold_changed(amount: int) -> void:
 	if lbl_gold: lbl_gold.text = "💰 %d" % amount
@@ -55,6 +58,10 @@ func _on_citizen_despawned(_citizen: Object, _cell: Vector2i) -> void:
 
 func _update_citizens_label() -> void:
 	if lbl_citizens: lbl_citizens.text = "🚶 %d" % _citizen_count
+
+func _on_resource_changed(resource_id: String, amount: float) -> void:
+	if resource_id == "food":
+		if lbl_food: lbl_food.text = "🌾 %d" % int(amount)
 
 func _on_notification(message: String, type: String) -> void:
 	if notif_container == null:

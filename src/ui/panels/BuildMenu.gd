@@ -59,13 +59,16 @@ func _show_category(cat_index: int) -> void:
 	_active_cat = cat_index
 	var cat: String = _categories[cat_index]
 	for bd_raw in _buildings_by_cat.get(cat, []):
-		btn_row.add_child(_create_button(bd_raw))
+		var btn: Node = _create_button(bd_raw)
+		btn_row.add_child(btn)
+		# setup() after add_child so get_node_or_null resolves correctly
+		if btn.has_method("setup"):
+			btn.setup(bd_raw)
 
 func _create_button(bd_raw: Dictionary) -> Node:
 	var btn_scene: PackedScene = load(BUILD_BUTTON_SCENE)
 	if btn_scene:
 		var btn: Node = btn_scene.instantiate()
-		btn.setup(bd_raw)
 		btn.pressed.connect(func(): _on_building_selected(bd_raw["id"]))
 		return btn
 	var btn := Button.new()
