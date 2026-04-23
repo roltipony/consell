@@ -8,6 +8,14 @@
 ##   3. citizen.setup_size(...)  → visual scale
 ##   4. citizen.start()          → builds the BT (needs home_cell to be set)
 ##
+## Schedule:
+##   Each citizen type has a CitizenSchedule loaded from
+##   game_settings.json["citizen_schedules"][citizen_type].
+##   Every hour the schedule is queried and "current_phase" is written to the
+##   blackboard. "is_work_time" remains available as a convenience alias
+##   (true when current_phase == "work"), so existing BT branches keep working
+##   without changes.
+##
 ## Job assignment:
 ##   Citizens spawn as "generic" (no job, default color).
 ##   When work time begins and no work_cell is assigned, the citizen
@@ -19,6 +27,12 @@ extends Node3D
 
 # ─── Fallback color before any job is assigned ────────────────────────────────
 const _DEFAULT_COLOR := Color(0.91, 0.753, 0.565)   # "#e8c090"
+
+# ─── Phase constants (used as keys; actual values come from config) ───────────
+const PHASE_WORK    := "work"
+const PHASE_EAT     := "eat"
+const PHASE_LEISURE := "leisure"
+const PHASE_SLEEP   := "sleep"
 
 # ─── Identity ─────────────────────────────────────────────────────────────────
 var home_cell: Vector2i  = Vector2i.ZERO
@@ -33,6 +47,9 @@ var _job_colors: Dictionary = {}
 
 ## Cell of the assigned work station. Vector2i(-1,-1) means unassigned.
 var work_cell: Vector2i = Vector2i(-1, -1)
+
+## Schedule that resolves the active phase for any given hour.
+var _schedule: CitizenSchedule = null
 
 # ─── Blackboard ───────────────────────────────────────────────────────────────
 var _ctx: Dictionary = {}
@@ -73,8 +90,8 @@ func _process(delta: float) -> void:
 	_tick_movement(delta)
 
 # ─── Config loading ───────────────────────────────────────────────────────────
-## Reads citizen_job_types and citizen_job_colors from game_settings.json.
-## No values are hardcoded here; all data lives in config.
+## Reads citizen_job_types, citizen_job_colors, and citizen_schedules from
+## game_settings.json. No values are hardcoded here; all data lives in config.
 func _load_config() -> void:
 	var cfg: Dictionary = ConfigLoader.game_settings
 
@@ -89,6 +106,10 @@ func _load_config() -> void:
 	assignable_job_ids.clear()
 	for id in ids:
 		assignable_job_ids.append(str(id))
+
+	# Load the day-phase schedule for this citizen type.
+	_schedule = CitizenSchedule.new()
+	_schedule.load_from_config(citizen_type)
 
 # ─── Subclass interface ───────────────────────────────────────────────────────
 ## Override in subclasses to supply a custom BT.
@@ -106,24 +127,57 @@ func _update_context() -> void:
 
 # ─── Context ──────────────────────────────────────────────────────────────────
 func _init_base_context() -> void:
-	var cfg: Dictionary = ConfigLoader.game_settings.get("day_cycle", {})
+	# "work_start" / "work_end" are kept for citizens that have NO schedule
+	# (i.e. generic citizens falling back to day_cycle config).
+	var day_cfg: Dictionary = ConfigLoader.game_settings.get("day_cycle", {})
 	_ctx = {
-		"citizen":      self,
-		"home_cell":    home_cell,
-		"is_work_time": false,
-		"is_moving":    false,
-		"at_target":    false,
-		"work_start":   cfg.get("work_start_hour", 6),
-		"work_end":     cfg.get("work_end_hour",   20),
-		"has_work":     false,
+		"citizen":        self,
+		"home_cell":      home_cell,
+		"current_phase":  CitizenSchedule.PHASE_DEFAULT,
+		"is_work_time":   false,
+		"is_moving":      false,
+		"at_target":      false,
+		"work_start":     day_cfg.get("work_start_hour", 6),
+		"work_end":       day_cfg.get("work_end_hour",   20),
+		"has_work":       false,
 	}
+	# Sync immediately so the first tick uses the correct phase.
+	_apply_phase(GameManager.game_time.hour)
 
+## Called every in-game hour. Resolves the new phase and updates the blackboard.
 func _on_hour_changed(hour: int) -> void:
-	var was_work := bool(_ctx.get("is_work_time", false))
-	_ctx["is_work_time"] = (hour >= _ctx["work_start"] and hour < _ctx["work_end"])
-	# First moment work starts: attempt job assignment if still unassigned
-	if _ctx["is_work_time"] and not was_work and not _ctx["has_work"]:
+	var prev_phase: String = _ctx.get("current_phase", CitizenSchedule.PHASE_DEFAULT)
+	_apply_phase(hour)
+	# First moment the work phase starts: attempt job assignment if still unassigned.
+	if _ctx["current_phase"] == PHASE_WORK and prev_phase != PHASE_WORK \
+			and not _ctx["has_work"]:
 		_try_assign_nearest_work()
+
+## Resolves the active phase for the given hour and writes it to the blackboard.
+## Falls back to the legacy work_start/work_end window when no schedule is loaded.
+## Calls _on_phase_changed() only when the phase actually transitions,
+## so subclasses can react (e.g. update color) exactly once per change.
+func _apply_phase(hour: int) -> void:
+	var prev_phase: String = _ctx.get("current_phase", CitizenSchedule.PHASE_DEFAULT)
+
+	if _schedule != null and _schedule.has_phases():
+		_ctx["current_phase"] = _schedule.phase_at(hour)
+	else:
+		# Fallback for citizens with no schedule defined in config.
+		var in_work: bool = (hour >= _ctx["work_start"] and hour < _ctx["work_end"])
+		_ctx["current_phase"] = PHASE_WORK if in_work else PHASE_SLEEP
+
+	# Convenience alias so existing BT branches that check "is_work_time" keep working.
+	_ctx["is_work_time"] = (_ctx["current_phase"] == PHASE_WORK)
+
+	# Notify subclasses only on actual phase transitions.
+	if _ctx["current_phase"] != prev_phase:
+		_on_phase_changed(_ctx["current_phase"])
+
+## Override in subclasses to react to a phase transition (e.g. update color).
+## Called at most once per hour, only when the phase actually changes.
+func _on_phase_changed(_new_phase: String) -> void:
+	pass
 
 # ─── Initialise (called by CitizenManager) ────────────────────────────────────
 func initialize(cell: Vector2i, cfg: Dictionary) -> void:
@@ -131,7 +185,7 @@ func initialize(cell: Vector2i, cfg: Dictionary) -> void:
 	_move_speed    = cfg.get("move_speed",    1.5)
 	_wander_radius = cfg.get("wander_radius", 3.0)
 	_wait_duration = cfg.get("wait_duration", 2.0)
-	# Always start with the default unassigned color; job assignment changes it
+	# Always start with the default unassigned color; job assignment changes it.
 	_color = _DEFAULT_COLOR
 
 func setup_size(building_cell_size: float) -> void:
@@ -186,13 +240,13 @@ func _try_assign_nearest_work() -> void:
 			assigned_id  = bld.data.id
 
 	if nearest_cell == Vector2i(-1, -1):
-		return  # No matching station placed yet
+		return  # No matching station placed yet.
 
 	work_cell             = nearest_cell
 	_ctx["has_work"]      = true
 	_ctx["work_cell"]     = work_cell
 
-	# Color comes from config; fallback to default if not listed
+	# Color comes from config; fallback to default if not listed.
 	set_color(_job_colors.get(assigned_id, _DEFAULT_COLOR))
 
 	EventBus.emit_signal("citizen_assigned_job", self, work_cell, assigned_id)
@@ -205,7 +259,6 @@ func _try_assign_nearest_work() -> void:
 ##   │    └─ Action: wander near home (job search fires via hour_changed)
 ##   └─ Action  [rest branch]      → wander near home
 func _build_default_tree() -> BTNode:
-	# BTSequence and BTSelector have no _init() — use add_child() builder pattern
 	var work_branch := BTSequence.new()
 	work_branch.add_child(BTCondition.new(_cond_should_work))
 	work_branch.add_child(BTAction.new(_work_action))

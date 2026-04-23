@@ -52,13 +52,13 @@
   "wheat": {
     "id": "wheat",
     "display_name": "Wheat",
-    "description": "Harvested by farmers each day. Converted to food automatically.",
+    "description": "Harvested by farmers. Each unit requires hours_per_unit consecutive working hours.",
     "icon_path": "res://assets/icons/resource_wheat.png",
     "starting_amount": 0,
     "max_storage": 1000,
     "critical_threshold": 0,
     "happiness_penalty_per_unit_below_threshold": 0.0,
     "food_value": 1.0,
-    "yield_per_farmer_per_day": 1
+    "hours_per_unit": 2
   }
 }

@@ -5,7 +5,7 @@ extends Node
 
 # ─── Constants ────────────────────────────────────────────────────
 const SETTINGS_PATH := "user://settings.cfg"
-const TICK_INTERVAL_SECONDS := 1.0  # Real-time seconds per game tick
+const TICK_INTERVAL_SECONDS := 3.0  # Real-time seconds per game tick
 
 # ─── Game Speed presets (multipliers over TICK_INTERVAL) ──────────
 enum GameSpeed { PAUSED = 0, SLOW = 1, NORMAL = 2, FAST = 3 }

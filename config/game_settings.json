@@ -74,5 +74,21 @@
   "citizen_type_classes": {
     "farmer": "FarmerCitizen",
     "generic": "Citizen"
+  },
+  "citizen_schedules": {
+    "farmer": [
+      { "id": "sleep",   "start": 0,  "end": 8  },
+      { "id": "work",    "start": 8,  "end": 14 },
+      { "id": "eat",     "start": 14, "end": 15 },
+      { "id": "leisure", "start": 15, "end": 24 }
+    ]
+  },
+  "citizen_phase_colors": {
+    "farmer": {
+      "work":    "#a0c840",
+      "eat":     "#d09040",
+      "leisure": "#70a0d0",
+      "sleep":   "#4060a0"
+    }
   }
 }
