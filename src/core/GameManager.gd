@@ -16,10 +16,12 @@ var is_paused: bool = false
 var game_time: GameTime = GameTime.new()
 
 # ─── System references (populated by GameWorld scene) ──────────────
-var economy_system: Node = null
+var economy_system:    Node = null
 var population_system: Node = null
-var grid_system: Node = null
-var event_system: Node = null
+var grid_system:       Node = null
+var event_system:      Node = null
+var citizen_manager:   Node = null
+var camera:            Node = null
 
 # ─── Internal ─────────────────────────────────────────────────────
 var _tick_timer: float = 0.0
@@ -62,12 +64,24 @@ func pause(value: bool) -> void:
 	is_paused = value
 	EventBus.emit_signal("game_paused", value)
 
+func get_system(system_name: String) -> Node:
+	match system_name:
+		"economy":         return economy_system
+		"population":      return population_system
+		"grid":            return grid_system
+		"events":          return event_system
+		"citizen_manager": return citizen_manager
+		"camera":          return camera
+	return null
+
 func register_system(system_name: String, node: Node) -> void:
 	match system_name:
-		"economy":    economy_system    = node
-		"population": population_system = node
-		"grid":       grid_system       = node
-		"events":     event_system      = node
+		"economy":          economy_system    = node
+		"population":       population_system = node
+		"grid":             grid_system       = node
+		"events":           event_system      = node
+		"citizen_manager":  citizen_manager   = node
+		"camera":           camera            = node
 		_:
 			push_warning("GameManager: Unknown system '%s'" % system_name)
 

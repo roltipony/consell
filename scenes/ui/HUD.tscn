@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://src/ui/hud/HUD.gd" id="1"]
+[ext_resource type="Script" path="res://src/ui/hud/CitizenInfoPanel.gd" id="2"]
+[ext_resource type="Script" path="res://src/ui/hud/CitizenTooltip.gd" id="3"]
 
 [node name="HUDLayer" type="CanvasLayer"]
 
@@ -44,3 +46,78 @@ anchor_bottom = 1.0
 anchor_top = 1.0
 offset_left = -320.0
 offset_top = -200.0
+
+; ── CitizenInfoPanel: bottom-right fixed panel, shown on citizen click ─────────
+[node name="CitizenInfoPanel" type="PanelContainer" parent="HUD"]
+script = ExtResource("2")
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = -340.0
+offset_right = -8.0
+offset_bottom = -8.0
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/CitizenInfoPanel"]
+anchors_preset = 15
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/CitizenInfoPanel/MarginContainer"]
+anchors_preset = 15
+theme_override_constants/separation = 6
+
+[node name="HeaderRow" type="HBoxContainer" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer"]
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer/HeaderRow"]
+text = "Citizen"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="CloseButton" type="Button" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer/HeaderRow"]
+text = "✕"
+custom_minimum_size = Vector2(26, 26)
+
+[node name="Divider" type="HSeparator" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer"]
+
+[node name="StatsGrid" type="GridContainer" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer"]
+columns = 2
+size_flags_horizontal = 3
+
+[node name="FollowButton" type="Button" parent="HUD/CitizenInfoPanel/MarginContainer/VBoxContainer"]
+text = "Unfollow"
+size_flags_horizontal = 3
+
+; ── CitizenTooltip: floats near cursor on hover, mouse_filter=IGNORE ──────────
+[node name="CitizenTooltip" type="Control" parent="HUD"]
+script = ExtResource("3")
+anchor_right = 0.0
+anchor_bottom = 0.0
+mouse_filter = 2
+visible = false
+
+[node name="Panel" type="PanelContainer" parent="HUD/CitizenTooltip"]
+custom_minimum_size = Vector2(170, 0)
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/CitizenTooltip/Panel"]
+anchors_preset = 15
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/CitizenTooltip/Panel/MarginContainer"]
+anchors_preset = 15
+theme_override_constants/separation = 3
+
+[node name="TitleLabel" type="Label" parent="HUD/CitizenTooltip/Panel/MarginContainer/VBoxContainer"]
+text = ""
+theme_override_font_sizes/font_size = 12
+
+[node name="StatsContainer" type="VBoxContainer" parent="HUD/CitizenTooltip/Panel/MarginContainer/VBoxContainer"]
+theme_override_constants/separation = 2

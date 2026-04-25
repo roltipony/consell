@@ -1,5 +1,10 @@
 ## CameraController.gd
-## Isometric 3D camera with smooth panning and zoom.
+## Isometric 3D camera with smooth panning, zoom, and optional citizen follow mode.
+##
+## Follow mode:
+##   Set follow_target to a Node3D to lock the pivot onto it each frame.
+##   Any manual pan input (keyboard or edge scroll) cancels follow mode
+##   so the player never feels locked in.
 class_name CameraController
 extends Node3D
 
@@ -16,6 +21,10 @@ var _current_distance: float = 30.0
 var _pivot: Vector3 = Vector3.ZERO
 var _camera: Camera3D
 
+## When set, the camera pivot tracks this node's world position each frame.
+## Cleared automatically when the player pans manually.
+var follow_target: Node3D = null
+
 # Ángulos isométricos fijos (true isometric)
 const ISO_ANGLE_Y: float = 45.0
 const ISO_ANGLE_X: float = 35.264
@@ -26,6 +35,7 @@ func _ready() -> void:
 	_camera.fov = ConfigLoader.game_settings.get(CFG_KEY, {}).get("fov", 45)
 	add_child(_camera)
 	center_on_grid()
+	GameManager.register_system("camera", self)
 
 func _load_config() -> void:
 	var cfg: Dictionary = ConfigLoader.game_settings.get(CFG_KEY, {})
@@ -62,7 +72,12 @@ func _apply_transform() -> void:
 	look_at(_pivot, Vector3.UP)
 
 func _process(delta: float) -> void:
-	_handle_movement(delta)
+	if follow_target != null and is_instance_valid(follow_target):
+		_pivot = Vector3(follow_target.global_position.x, 0.0,
+			follow_target.global_position.z)
+		_apply_transform()
+	else:
+		_handle_movement(delta)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("camera_zoom_in"):
@@ -87,6 +102,8 @@ func _handle_movement(delta: float) -> void:
 		if mouse.y > vsize.y - edge_margin:  dir.y += 1.0
 
 	if dir != Vector2.ZERO:
+		# Any manual pan cancels follow mode.
+		follow_target = null
 		dir = dir.normalized()
 		var ay := deg_to_rad(ISO_ANGLE_Y)
 		var forward := Vector3(-sin(ay), 0.0, -cos(ay))
@@ -97,3 +114,11 @@ func _handle_movement(delta: float) -> void:
 func _change_zoom(delta: float) -> void:
 	_current_distance = clampf(_current_distance + delta, zoom_min, zoom_max)
 	_apply_transform()
+
+## Locks the camera pivot onto a Node3D target.
+func follow(target: Node3D) -> void:
+	follow_target = target
+
+## Releases follow mode without moving the pivot.
+func release_follow() -> void:
+	follow_target = null

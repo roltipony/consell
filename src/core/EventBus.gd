@@ -8,6 +8,7 @@ signal gold_changed(new_amount: int)
 signal income_changed(new_income: int)
 signal expense_changed(new_expense: int)
 signal resource_changed(resource_id: String, new_amount: float)
+signal resource_shortage(resource_id: String)
 
 # ─── Population Signals ────────────────────────────────────────────
 signal population_changed(new_population: int)
@@ -16,6 +17,12 @@ signal unemployment_changed(new_rate: float)
 signal citizen_spawned(citizen: Object, cell: Vector2i)
 signal citizen_despawned(citizen: Object, cell: Vector2i)
 signal citizen_assigned_job(citizen: Object, work_cell: Vector2i, job_type: String)
+signal citizen_died(citizen: Object, cause: String)
+signal citizen_stats_changed(citizen: Object, stat_name: String, new_value: Variant)
+signal citizen_hovered(citizen: Object)
+signal citizen_unhovered()
+signal citizen_selected(citizen: Object)
+signal citizen_deselected()
 
 # ─── Time Signals ──────────────────────────────────────────────────
 signal hour_changed(hour: int)

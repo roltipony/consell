@@ -20,8 +20,10 @@ var _type_scripts:    Dictionary = {}
 # ─── Lifecycle ────────────────────────────────────────────────────────────────
 func _ready() -> void:
 	_load_config()
+	GameManager.register_system("citizen_manager", self)
 	EventBus.building_placed.connect(_on_building_placed)
 	EventBus.building_removed.connect(_on_building_removed)
+	EventBus.citizen_died.connect(_on_citizen_died)
 
 func _load_config() -> void:
 	var cfg: Dictionary = ConfigLoader.game_settings
@@ -57,6 +59,14 @@ func _on_building_removed(building_data: BuildingData, cell: Vector2i) -> void:
 	if building_data.population_capacity <= 0:
 		return
 	_despawn_citizen_for_cell(cell)
+
+## Handles natural death (starvation, dehydration, old age) triggered by CitizenStats.
+## Removes the citizen from the registry; queue_free() is called by Citizen itself.
+func _on_citizen_died(citizen: Citizen, _cause: String) -> void:
+	for cell in _citizen_by_cell:
+		if _citizen_by_cell[cell] == citizen:
+			_citizen_by_cell.erase(cell)
+			return
 
 # ─── Spawn / Despawn ──────────────────────────────────────────────────────────
 func _spawn_citizen_for_cell(cell: Vector2i, building_data: BuildingData) -> void:
