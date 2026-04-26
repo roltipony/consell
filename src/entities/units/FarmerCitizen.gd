@@ -28,9 +28,10 @@
 ##   │       └── Action    : walk_to_field
 ##   ├── Sequence [eat]
 ##   │   ├── Condition : phase_is("eat")
-##   │   └── Selector  : is_at_home OR walk_home
-##   │       ├── Condition : is_at_home
-##   │       └── Action    : walk_home
+##   │   ├── Selector  : is_at_home OR walk_home
+##   │   │   ├── Condition : is_at_home
+##   │   │   └── Action    : walk_home
+##   │   └── Action    : eat  (consume food/water from stockpile, once per phase)
 ##   ├── Sequence [leisure]
 ##   │   ├── Condition : phase_is("leisure")
 ##   │   └── Action    : wander
@@ -117,11 +118,15 @@ func _build_work_branch() -> BTNode:
 	seq.add_child(_build_reach_field_subtree())
 	return seq
 
-## eat: return home.
+## eat: return home, then consume food and water from the stockpile.
+## The go-home subtree keeps returning RUNNING while walking and resolves
+## to SUCCESS on arrival, after which _eat_action fires exactly once per
+## eat phase (_ate_this_phase / _drank_this_phase flags in Citizen).
 func _build_eat_branch() -> BTNode:
 	var seq := BTSequence.new()
 	seq.add_child(BTCondition.new(_cond_phase_is_eat))
 	seq.add_child(_build_go_home_subtree())
+	seq.add_child(BTAction.new(_eat_action))
 	return seq
 
 ## leisure: wander near home.

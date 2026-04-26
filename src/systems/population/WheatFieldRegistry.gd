@@ -51,11 +51,14 @@ func _on_building_removed(building_data: BuildingData, cell: Vector2i) -> void:
 	if building_data.id != "wheat_field":
 		return
 	var farmer = _fields.get(cell, null)
-	if farmer is FarmerCitizen:
-		(farmer as FarmerCitizen).release_field()
 	_fields.erase(cell)
 	_field_hours.erase(cell)
 	EventBus.emit_signal("wheat_field_unregistered", cell)
+	# Release the farmer AFTER removing the cell from _fields so the
+	# field-search below cannot accidentally re-assign them to the deleted cell.
+	if farmer is FarmerCitizen:
+		(farmer as FarmerCitizen).release_field()
+		_try_assign_farmer(farmer as FarmerCitizen)
 
 # ─── Citizen signals ──────────────────────────────────────────────────────────
 func _on_citizen_spawned(citizen: Object, _cell: Vector2i) -> void:

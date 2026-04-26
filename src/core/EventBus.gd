@@ -24,6 +24,22 @@ signal citizen_unhovered()
 signal citizen_selected(citizen: Object)
 signal citizen_deselected()
 
+## Emitted when a new immigrant arrives in the village.
+## citizen_type: "male" | "female"
+signal citizen_arrived(citizen: Object, gender: String)
+
+## Emitted when two citizens form a couple and move into a house together.
+signal couple_formed(citizen_a: Object, citizen_b: Object, house_cell: Vector2i)
+
+## Emitted when a couple produces a child.
+signal child_born(child: Object, parent_a: Object, parent_b: Object, house_cell: Vector2i)
+
+## Emitted when a child citizen reaches child_growth_age and becomes an adult.
+signal citizen_grew_up(citizen: Object)
+
+## Emitted when the player clicks a house to request the occupants panel.
+signal house_info_requested(house_cell: Vector2i, occupants: Array)
+
 # ─── Time Signals ──────────────────────────────────────────────────
 signal hour_changed(hour: int)
 signal wheat_field_registered(cell: Vector2i)
@@ -57,7 +73,7 @@ signal panel_open_requested(panel_id: String, data: Dictionary)
 signal panel_close_requested(panel_id: String)
 signal build_mode_entered(building_id: String)
 signal build_mode_exited()
-signal build_mode_rotate()   # ← NEW: rotate the ghost 90°
+signal build_mode_rotate()
 
 # ─── Event / Disaster Signals ──────────────────────────────────────
 signal game_event_triggered(event_data: Dictionary)

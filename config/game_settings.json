@@ -22,7 +22,9 @@
     "starting_population": 0,
     "starting_happiness": 0.75,
     "food_per_citizen_per_day": 1.0,
-    "water_per_citizen_per_day": 1.0
+    "water_per_citizen_per_day": 1.0,
+    "food_immigration_threshold": 1.0,
+    "immigration_cooldown_days": 1
   },
   "events": {
     "ticks_between_rolls": 240
@@ -78,11 +80,59 @@
     "generic": "Citizen"
   },
   "citizen_schedules": {
+    "generic": [
+      {
+        "id": "sleep",
+        "start": 0,
+        "end": 6
+      },
+      {
+        "id": "work",
+        "start": 6,
+        "end": 13
+      },
+      {
+        "id": "eat",
+        "start": 13,
+        "end": 14
+      },
+      {
+        "id": "work",
+        "start": 14,
+        "end": 20
+      },
+      {
+        "id": "leisure",
+        "start": 20,
+        "end": 22
+      },
+      {
+        "id": "sleep",
+        "start": 22,
+        "end": 24
+      }
+    ],
     "farmer": [
-      { "id": "sleep",   "start": 0,  "end": 8  },
-      { "id": "work",    "start": 8,  "end": 14 },
-      { "id": "eat",     "start": 14, "end": 15 },
-      { "id": "leisure", "start": 15, "end": 24 }
+      {
+        "id": "sleep",
+        "start": 0,
+        "end": 8
+      },
+      {
+        "id": "work",
+        "start": 8,
+        "end": 14
+      },
+      {
+        "id": "eat",
+        "start": 14,
+        "end": 15
+      },
+      {
+        "id": "leisure",
+        "start": 15,
+        "end": 24
+      }
     ]
   },
   "citizen_stats": {
@@ -90,60 +140,132 @@
     "max_hunger": 50.0,
     "max_thirst": 50.0,
     "max_age": 80,
-
     "hunger_damage_per_day": 10.0,
     "thirst_damage_per_day": 20.0,
     "hunger_decay_per_day": 5.0,
     "thirst_decay_per_day": 5.0,
-
     "base_speed": 1.5,
     "speed_variation": 0.15,
-
-    "genders": ["male", "female"],
-
+    "genders": [
+      "male",
+      "female"
+    ],
     "base_strength": 50.0,
     "strength_variation": 10.0,
-
     "base_stamina": 50.0,
     "stamina_variation": 10.0,
-
     "base_happiness": 0.75,
-
     "age_min_spawn": 18,
     "age_max_spawn": 40,
-
     "base_sight": 5.0,
     "sight_variation": 1.0,
-
     "shortage_stat_map": {
-      "food":  "hunger",
+      "food": "hunger",
       "water": "thirst"
     },
     "shortage_hunger_penalty": 5.0,
     "shortage_thirst_penalty": 5.0
   },
   "citizen_ui": {
-    "tooltip_stats": ["health", "hunger", "thirst", "happiness", "speed", "strength", "stamina", "sight"],
-    "panel_stats":   ["health", "hunger", "thirst", "happiness", "speed", "strength", "stamina", "sight", "age", "gender"],
+    "tooltip_stats": [
+      "health",
+      "hunger",
+      "thirst",
+      "happiness",
+      "speed",
+      "strength",
+      "stamina",
+      "sight"
+    ],
+    "panel_stats": [
+      "health",
+      "hunger",
+      "thirst",
+      "happiness",
+      "speed",
+      "strength",
+      "stamina",
+      "sight",
+      "age",
+      "gender"
+    ],
     "stat_display_names": {
-      "health":    "Health",
-      "hunger":    "Hunger",
-      "thirst":    "Thirst",
+      "health": "Health",
+      "hunger": "Hunger",
+      "thirst": "Thirst",
       "happiness": "Happiness",
-      "speed":     "Speed",
-      "strength":  "Strength",
-      "stamina":   "Stamina",
-      "sight":     "Sight",
-      "age":       "Age",
-      "gender":    "Gender"
+      "speed": "Speed",
+      "strength": "Strength",
+      "stamina": "Stamina",
+      "sight": "Sight",
+      "age": "Age",
+      "gender": "Gender"
     }
   },
   "citizen_phase_colors": {
     "farmer": {
-      "work":    "#a0c840",
-      "eat":     "#d09040",
+      "work": "#a0c840",
+      "eat": "#d09040",
       "leisure": "#70a0d0",
-      "sleep":   "#4060a0"
+      "sleep": "#4060a0"
+    },
+    "generic": {
+      "work": "#6688cc",
+      "eat": "#d09040",
+      "leisure": "#70a0d0",
+      "sleep": "#4060a0"
     }
+  },
+  "citizen_names": {
+    "male": [
+      "Aldric",
+      "Brennan",
+      "Caelan",
+      "Dorian",
+      "Edric",
+      "Faelen",
+      "Gareth",
+      "Hadwin",
+      "Idris",
+      "Jareth",
+      "Kelan",
+      "Leofric",
+      "Meryn",
+      "Nolan",
+      "Oswin",
+      "Peregrin",
+      "Quentin",
+      "Rodric",
+      "Silvain",
+      "Theron"
+    ],
+    "female": [
+      "Aelith",
+      "Brenna",
+      "Caelia",
+      "Dwyn",
+      "Elara",
+      "Fiona",
+      "Gwyneth",
+      "Hilda",
+      "Isadora",
+      "Jessa",
+      "Keira",
+      "Lyra",
+      "Maren",
+      "Niamh",
+      "Orla",
+      "Phaedra",
+      "Rhoswen",
+      "Seren",
+      "Talwyn",
+      "Vesna"
+    ]
+  },
+  "house_rules": {
+    "max_children": 4,
+    "child_growth_age": 4,
+    "couple_days_to_reproduce": 2,
+    "child_mesh_scale_factor": 0.55
   }
 }

@@ -6,18 +6,21 @@
 ##
 ## Lifecycle:
 ##   var stats := CitizenStats.new()
-##   stats.initialize(cfg)          ← pass ConfigLoader.game_settings["citizen_stats"]
+##   stats.initialize(cfg)                ← adult with random gender/age
+##   stats.initialize(cfg, "male")        ← adult with forced gender
+##   stats.initialize(cfg, "female", 0)   ← child: forced gender, age 0
 ##
 ## Stats summary:
+##   name      — given name drawn from game_settings.json["citizen_names"][gender].
 ##   health    — 0..max_health.  Reaches 0 → citizen dies.
 ##   hunger    — 0..max_hunger.  Reaches 0 → drains health (hunger_damage_per_day / day).
 ##   thirst    — 0..max_thirst.  Reaches 0 → drains health (thirst_damage_per_day / day).
 ##   speed     — world-units / second.  Base ± speed_variation applied at spawn.
-##   gender    — "male" | "female".  Chosen randomly at spawn.
+##   gender    — "male" | "female".  Chosen randomly at spawn, or forced.
 ##   strength  — 0..100 base stat, randomised ± strength_variation.
 ##   stamina   — 0..100 base stat, randomised ± stamina_variation.
 ##   happiness — 0.0..1.0.
-##   age       — integer years.  Starts random in [age_min_spawn, age_max_spawn].
+##   age       — integer years.  Starts random in [age_min_spawn, age_max_spawn], or forced.
 ##               Increments by 1 each in-game year.  ≥ max_age → citizen dies.
 ##   sight     — detection radius in world units.  Base ± sight_variation.
 class_name CitizenStats
@@ -39,6 +42,7 @@ var hunger_damage_per_day: float = 0.0
 var thirst_damage_per_day: float = 0.0
 
 # ─── Personal statistics ───────────────────────────────────────────────────────
+var citizen_name: String = ""
 var health:    float  = 0.0
 var hunger:    float  = 0.0
 var thirst:    float  = 0.0
@@ -55,8 +59,9 @@ var _dead: bool = false
 
 # ─── Initialization ───────────────────────────────────────────────────────────
 ## Reads every base value and variation from the provided config dictionary.
-## All random variation is applied here once — stats are personal from birth.
-func initialize(cfg: Dictionary) -> void:
+## forced_gender: pass a non-empty string ("male" / "female") to override random.
+## forced_age:    pass a value >= 0 to override the random spawn age (0 = newborn).
+func initialize(cfg: Dictionary, forced_gender: String = "", forced_age: int = -1) -> void:
 	max_health  = float(cfg.get("max_health",  50.0))
 	max_hunger  = float(cfg.get("max_hunger",  50.0))
 	max_thirst  = float(cfg.get("max_thirst",  50.0))
@@ -92,17 +97,35 @@ func initialize(cfg: Dictionary) -> void:
 	var sight_variation: float = float(cfg.get("sight_variation", 1.0))
 	sight = maxf(0.5, base_sight + randf_range(-sight_variation, sight_variation))
 
-	# Age: random start inside spawn range
-	var age_min: int = int(cfg.get("age_min_spawn", 18))
-	var age_max: int = int(cfg.get("age_max_spawn", 40))
-	age = randi_range(age_min, age_max)
-
-	# Gender: equal 50/50 from config list so adding genders only needs a config edit
+	# Gender: use forced value or random from config list
 	var genders: Array = cfg.get("genders", ["male", "female"])
-	gender = str(genders[randi() % genders.size()])
+	if forced_gender != "" and forced_gender in genders:
+		gender = forced_gender
+	else:
+		gender = str(genders[randi() % genders.size()])
+
+	# Age: use forced value or random spawn range
+	if forced_age >= 0:
+		age = forced_age
+	else:
+		var age_min: int = int(cfg.get("age_min_spawn", 18))
+		var age_max: int = int(cfg.get("age_max_spawn", 40))
+		age = randi_range(age_min, age_max)
+
+	# Name: drawn from citizen_names[gender] in game_settings.json
+	citizen_name = _pick_name(gender)
 
 	# React to global resource shortages declared by PopulationSystem.
 	EventBus.resource_shortage.connect(_on_resource_shortage)
+
+## Picks a random name for the given gender from the names config.
+## Falls back to "Citizen" if no names are configured.
+func _pick_name(for_gender: String) -> String:
+	var names_cfg: Dictionary = ConfigLoader.game_settings.get("citizen_names", {})
+	var name_list: Array = names_cfg.get(for_gender, [])
+	if name_list.is_empty():
+		return "Citizen"
+	return str(name_list[randi() % name_list.size()])
 
 # ─── Per-day tick ─────────────────────────────────────────────────────────────
 ## Must be called once per in-game day (connected to EventBus.new_day).
@@ -162,6 +185,7 @@ func set_happiness(value: float) -> void:
 # ─── Serialization ────────────────────────────────────────────────────────────
 func serialize() -> Dictionary:
 	return {
+		"citizen_name": citizen_name,
 		"health":    health,
 		"hunger":    hunger,
 		"thirst":    thirst,
@@ -175,6 +199,7 @@ func serialize() -> Dictionary:
 	}
 
 func deserialize(data: Dictionary) -> void:
+	citizen_name = str(data.get("citizen_name", "Citizen"))
 	health    = float(data.get("health",    max_health))
 	hunger    = float(data.get("hunger",    max_hunger))
 	thirst    = float(data.get("thirst",    max_thirst))

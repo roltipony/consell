@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://src/ui/hud/HUD.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/hud/CitizenInfoPanel.gd" id="2"]
 [ext_resource type="Script" path="res://src/ui/hud/CitizenTooltip.gd" id="3"]
+[ext_resource type="Script" path="res://src/ui/panels/InfoPanel.gd" id="4"]
 
 [node name="HUDLayer" type="CanvasLayer"]
 
@@ -46,6 +47,66 @@ anchor_bottom = 1.0
 anchor_top = 1.0
 offset_left = -320.0
 offset_top = -200.0
+
+; ── InfoPanel: bottom-left, shown on building click ────────────────────────────
+[node name="InfoPanel" type="PanelContainer" parent="HUD"]
+script = ExtResource("4")
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -300.0
+offset_right = 250.0
+offset_bottom = -8.0
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/InfoPanel"]
+anchors_preset = 15
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="HUD/InfoPanel/MarginContainer"]
+anchors_preset = 15
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Edificio"
+theme_override_font_sizes/font_size = 14
+
+[node name="LevelLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Nivel: 1 / 1"
+
+[node name="IncomeLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Ingresos: 0"
+
+[node name="UpkeepLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Mantenimiento: 0"
+
+[node name="PopLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Vivienda: 0"
+
+[node name="JobsLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Empleos: 0"
+
+[node name="OccupantsLabel" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Habitantes:"
+visible = false
+theme_override_font_sizes/font_size = 12
+
+[node name="OccupantsList" type="Label" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = ""
+visible = false
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 11
+
+[node name="HSep" type="HSeparator" parent="HUD/InfoPanel/MarginContainer/VBox"]
+
+[node name="UpgradeButton" type="Button" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Mejorar"
+
+[node name="DemolishButton" type="Button" parent="HUD/InfoPanel/MarginContainer/VBox"]
+text = "Demoler"
 
 ; ── CitizenInfoPanel: bottom-right fixed panel, shown on citizen click ─────────
 [node name="CitizenInfoPanel" type="PanelContainer" parent="HUD"]
