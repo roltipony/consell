@@ -56,18 +56,18 @@ func _on_building_removed(building_data: BuildingData, cell: Vector2i) -> void:
 	EventBus.emit_signal("wheat_field_unregistered", cell)
 	# Release the farmer AFTER removing the cell from _fields so the
 	# field-search below cannot accidentally re-assign them to the deleted cell.
-	if farmer is FarmerCitizen:
+	if is_instance_valid(farmer) and farmer is FarmerCitizen:
 		(farmer as FarmerCitizen).release_field()
 		_try_assign_farmer(farmer as FarmerCitizen)
 
 # ─── Citizen signals ──────────────────────────────────────────────────────────
 func _on_citizen_spawned(citizen: Object, _cell: Vector2i) -> void:
-	if not citizen is FarmerCitizen:
+	if not is_instance_valid(citizen) or not citizen is FarmerCitizen:
 		return
 	_try_assign_farmer(citizen as FarmerCitizen)
 
 func _on_citizen_despawned(citizen: Object, _cell: Vector2i) -> void:
-	if not citizen is FarmerCitizen:
+	if not is_instance_valid(citizen) or not citizen is FarmerCitizen:
 		return
 	var farmer := citizen as FarmerCitizen
 	if farmer.has_field():
@@ -80,7 +80,7 @@ func _on_citizen_despawned(citizen: Object, _cell: Vector2i) -> void:
 func _on_hour_changed(_hour: int) -> void:
 	for field_cell in _fields:
 		var farmer = _fields[field_cell]
-		if not farmer is FarmerCitizen:
+		if not is_instance_valid(farmer) or not farmer is FarmerCitizen:
 			continue
 		if not (farmer as FarmerCitizen).is_working():
 			continue
@@ -96,6 +96,8 @@ func _produce_wheat() -> void:
 
 # ─── Assignment ───────────────────────────────────────────────────────────────
 func _try_assign_farmer(farmer: FarmerCitizen) -> void:
+	if not is_instance_valid(farmer) or farmer.is_queued_for_deletion():
+		return
 	if farmer.has_field():
 		return
 	var nearest_cell: Vector2i = _find_nearest_free_field(farmer.home_cell)
@@ -112,7 +114,7 @@ func _try_assign_all_unassigned_farmers() -> void:
 		return
 	for cell in _citizen_manager.get_all_citizen_cells():
 		for citizen in _citizen_manager.get_citizens_at(cell):
-			if citizen is FarmerCitizen and not (citizen as FarmerCitizen).has_field():
+			if is_instance_valid(citizen) and citizen is FarmerCitizen and not (citizen as FarmerCitizen).has_field():
 				_try_assign_farmer(citizen as FarmerCitizen)
 
 func _find_nearest_free_field(from_cell: Vector2i) -> Vector2i:

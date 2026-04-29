@@ -1,5 +1,6 @@
 ## BuildingPlacer.gd
 ## Handles placement mode: ghost preview, click to place, R to rotate, Escape to cancel.
+## Supports both BuildingData placement and ResourceObject placement (trees, rocks).
 ## El click del mouse lo gestiona GameWorld._input y llama try_place_at_mouse().
 class_name BuildingPlacer
 extends Node3D
@@ -10,6 +11,9 @@ var _ghost: Node3D = null
 var _hover_cell: Vector2i = Vector2i.ZERO
 var _can_place_here: bool = false
 var _rotation_steps: int = 0
+
+## When non-empty, we are placing a resource object (tree/rock) rather than a building.
+var _pending_resource_object_type: String = ""
 
 const COLOR_VALID:   Color = Color(0.2, 1.0, 0.2, 0.5)
 const COLOR_INVALID: Color = Color(1.0, 0.2, 0.2, 0.5)
@@ -31,9 +35,12 @@ func _process(_delta: float) -> void:
 func try_place_at_mouse() -> void:
 	if not _active:
 		return
-	_try_place()
+	if _pending_resource_object_type != "":
+		_try_place_resource_object()
+	else:
+		_try_place()
 
-# ── Placement ─────────────────────────────────────────────────────
+# ── Building Placement ─────────────────────────────────────────────
 
 func _try_place() -> void:
 	if not _can_place_here:
@@ -55,6 +62,34 @@ func _try_place() -> void:
 	node.initialize(_pending_data, _hover_cell)
 	GameManager.grid_system.place_building(_pending_data_rotated(), _hover_cell, node)
 	node.rotation_degrees.y = _rotation_steps * 90.0
+
+# ── Resource Object Placement ──────────────────────────────────────
+
+func _try_place_resource_object() -> void:
+	if not _can_place_here:
+		EventBus.notify("No se puede colocar aquí.", "warning")
+		return
+	var reg: ResourceObjectRegistry = GameManager.get_system("resource_object_registry")
+	if reg == null:
+		push_error("BuildingPlacer: ResourceObjectRegistry not found.")
+		return
+	var obj: ResourceObject = reg.place_object(_pending_resource_object_type, _hover_cell)
+	if obj == null:
+		EventBus.notify("Celda ya ocupada por un objeto.", "warning")
+		return
+	# Parent the new node to the grid so it appears in the world
+	GameManager.grid_system.add_child(obj)
+	obj.position = GameManager.grid_system.cell_to_world(_hover_cell)
+
+
+func _can_place_resource_object_at(cell: Vector2i) -> bool:
+	var gs: GridSystem = GameManager.grid_system
+	if not gs.is_cell_free(cell):
+		return false
+	var reg: ResourceObjectRegistry = GameManager.get_system("resource_object_registry")
+	if reg != null and reg.is_cell_occupied_by_object(cell):
+		return false
+	return true
 
 # ── Rotation ──────────────────────────────────────────────────────
 
@@ -84,6 +119,8 @@ func _pending_data_rotated() -> BuildingData:
 	rotated.happiness_modifier   = _pending_data.happiness_modifier
 	rotated.resource_production  = _pending_data.resource_production
 	rotated.resource_consumption = _pending_data.resource_consumption
+	rotated.material_cost        = _pending_data.material_cost
+	rotated.spawns_initial_citizen = _pending_data.spawns_initial_citizen
 	rotated.requires_road        = _pending_data.requires_road
 	rotated.requires_power       = _pending_data.requires_power
 	rotated.requires_water       = _pending_data.requires_water
@@ -99,18 +136,23 @@ func _cancel() -> void:
 # ── Ghost ─────────────────────────────────────────────────────────
 
 func _update_ghost_position() -> void:
-	var camera: Camera3D = get_viewport().get_camera_3d()
-	if camera == null:
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if cam == null:
 		return
 	var mouse_pos: Vector2  = get_viewport().get_mouse_position()
-	var ray_origin: Vector3 = camera.project_ray_origin(mouse_pos)
-	var ray_dir: Vector3    = camera.project_ray_normal(mouse_pos)
+	var ray_origin: Vector3 = cam.project_ray_origin(mouse_pos)
+	var ray_dir: Vector3    = cam.project_ray_normal(mouse_pos)
 	if abs(ray_dir.y) < 0.001:
 		return
 	var t: float           = -ray_origin.y / ray_dir.y
 	var world_pos: Vector3 = ray_origin + ray_dir * t
-	_hover_cell     = GameManager.grid_system.world_to_cell(world_pos)
-	_can_place_here = GameManager.grid_system.can_place(_pending_data_rotated(), _hover_cell)
+	_hover_cell = GameManager.grid_system.world_to_cell(world_pos)
+
+	if _pending_resource_object_type != "":
+		_can_place_here = _can_place_resource_object_at(_hover_cell)
+	else:
+		_can_place_here = GameManager.grid_system.can_place(_pending_data_rotated(), _hover_cell)
+
 	if _ghost:
 		_ghost.position           = GameManager.grid_system.cell_to_world(_hover_cell)
 		_ghost.rotation_degrees.y = _rotation_steps * 90.0
@@ -124,6 +166,9 @@ func _tint_ghost(valid: bool) -> void:
 
 func _create_ghost() -> void:
 	_destroy_ghost()
+	if _pending_resource_object_type != "":
+		_create_resource_object_ghost()
+		return
 	var scene: PackedScene = load(_pending_data.scene_path)
 	if scene == null:
 		return
@@ -133,6 +178,20 @@ func _create_ghost() -> void:
 	add_child(_ghost)
 	_ghost.rotation_degrees.y = _rotation_steps * 90.0
 
+func _create_resource_object_ghost() -> void:
+	var cfg: Dictionary   = ConfigLoader.resource_objects.get(_pending_resource_object_type, {})
+	var script_path: String = cfg.get("script_path", "")
+	var obj: ResourceObject
+	if script_path != "":
+		var script: GDScript = load(script_path) as GDScript
+		if script:
+			obj = script.new() as ResourceObject
+	if obj == null:
+		obj = ResourceObject.new()
+	obj.initialize(_pending_resource_object_type, Vector2i.ZERO, cfg)
+	_ghost = obj
+	add_child(_ghost)
+
 func _destroy_ghost() -> void:
 	if _ghost:
 		_ghost.queue_free()
@@ -141,19 +200,30 @@ func _destroy_ghost() -> void:
 # ── EventBus handlers ─────────────────────────────────────────────
 
 func _on_build_mode_entered(building_id: String) -> void:
+	# Check if this is a resource object type
+	if ConfigLoader.resource_objects.has(building_id):
+		_pending_resource_object_type = building_id
+		_pending_data                 = null
+		_rotation_steps               = 0
+		_active                       = true
+		_create_ghost()
+		return
+	# Otherwise treat as normal building
 	var raw: Dictionary = ConfigLoader.get_building(building_id)
 	if raw.is_empty():
 		push_error("BuildingPlacer: ID desconocido '%s'" % building_id)
 		return
-	_pending_data   = BuildingData.from_dict(raw)
-	_rotation_steps = 0
-	_active         = true
+	_pending_data                 = BuildingData.from_dict(raw)
+	_pending_resource_object_type = ""
+	_rotation_steps               = 0
+	_active                       = true
 	_create_ghost()
 
 func _on_build_mode_exited() -> void:
-	_active         = false
-	_pending_data   = null
-	_rotation_steps = 0
+	_active                       = false
+	_pending_data                 = null
+	_pending_resource_object_type = ""
+	_rotation_steps               = 0
 	_destroy_ghost()
 
 func _on_build_mode_rotate() -> void:

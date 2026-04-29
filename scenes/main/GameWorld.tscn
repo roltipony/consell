@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://4w5340x2hm5b" path="res://src/systems/events/EventSystem.gd" id="7"]
 [ext_resource type="Script" uid="uid://d3e5uf3ctkika" path="res://src/systems/population/CitizenManager.gd" id="8"]
 [ext_resource type="Script" uid="uid://diijch3e0ewja" path="res://src/systems/population/WheatFieldRegistry.gd" id="9"]
+[ext_resource type="Script" uid="uid://bailpu2x2e8ts" path="res://src/systems/world/ResourceObjectRegistry.gd" id="10"]
 
 [node name="GameWorld" type="Node3D" unique_id=1951626949]
 script = ExtResource("1")
@@ -42,6 +43,9 @@ script = ExtResource("8")
 
 [node name="WheatFieldRegistry" type="Node" parent="Systems" unique_id=1389204715]
 script = ExtResource("9")
+
+[node name="ResourceObjectRegistry" type="Node" parent="Systems" unique_id=252403611]
+script = ExtResource("10")
 
 [node name="CameraController" type="Node3D" parent="." unique_id=1107802135]
 script = ExtResource("2")

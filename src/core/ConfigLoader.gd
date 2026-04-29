@@ -12,17 +12,19 @@ var resources: Dictionary = {}
 var events: Dictionary = {}
 var game_settings: Dictionary = {}
 var zone_rules: Dictionary = {}
+var resource_objects: Dictionary = {}
 
 func _ready() -> void:
 	_load_all()
 
 func _load_all() -> void:
-	buildings     = _load_json("buildings.json")
-	terrain_types = _load_json("terrain_types.json")
-	resources     = _load_json("resources.json")
-	events        = _load_json("events.json")
-	game_settings = _load_json("game_settings.json")
-	zone_rules    = _load_json("zone_rules.json")
+	buildings       = _load_json("buildings.json")
+	terrain_types   = _load_json("terrain_types.json")
+	resources       = _load_json("resources.json")
+	events          = _load_json("events.json")
+	game_settings   = _load_json("game_settings.json")
+	zone_rules      = _load_json("zone_rules.json")
+	resource_objects = _load_json("resource_objects.json")
 
 func _load_json(filename: String) -> Dictionary:
 	var path := CONFIG_DIR + filename
@@ -45,6 +47,10 @@ func get_building(building_id: String) -> Dictionary:
 ## Returns the raw dict for a single resource by its id.
 func get_resource(resource_id: String) -> Dictionary:
 	return resources.get(resource_id, {})
+
+## Returns the raw dict for a single resource object by its type id.
+func get_resource_object(type_id: String) -> Dictionary:
+	return resource_objects.get(type_id, {})
 
 ## Hot-reload all configs (useful during development).
 func reload() -> void:

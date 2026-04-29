@@ -76,6 +76,7 @@ func _load_phase_colors(cfg: Dictionary) -> void:
 ## Called by Citizen._apply_phase() whenever the active phase changes.
 ## Resets transit flags so the new phase starts clean, then updates color.
 func _on_phase_changed(new_phase: String) -> void:
+	if is_queued_for_deletion(): return
 	# Clear transit state on every phase transition so actions
 	# don't carry stale "going_to_field / going_home" flags into the new phase.
 	_ctx[CTX_GOING_TO_FIELD] = false
@@ -225,6 +226,8 @@ func is_working() -> bool:
 
 # ─── Day reset ────────────────────────────────────────────────────────────────
 func _on_new_day(_day: int, _month: int, _year: int) -> void:
+	if is_queued_for_deletion():
+		return
 	_ctx[CTX_IS_WORKING]     = false
 	_ctx[CTX_IS_AT_HOME]     = false
 	_ctx[CTX_GOING_TO_FIELD] = false

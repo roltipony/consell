@@ -35,6 +35,7 @@ func _ready() -> void:
 func _build_category_data() -> void:
 	_buildings_by_cat.clear()
 	_categories.clear()
+	# Buildings from buildings.json
 	for building_id in ConfigLoader.buildings:
 		var bd: Dictionary = ConfigLoader.buildings[building_id]
 		var cat: String = bd.get("category", "misc")
@@ -42,6 +43,14 @@ func _build_category_data() -> void:
 			_buildings_by_cat[cat] = []
 			_categories.append(cat)
 		_buildings_by_cat[cat].append(bd)
+	# Resource objects from resource_objects.json (shown in their own tab)
+	for obj_type in ConfigLoader.resource_objects:
+		var rd: Dictionary = ConfigLoader.resource_objects[obj_type]
+		var cat: String = rd.get("category", "resource_object")
+		if not _buildings_by_cat.has(cat):
+			_buildings_by_cat[cat] = []
+			_categories.append(cat)
+		_buildings_by_cat[cat].append(rd)
 
 func _populate_tabs() -> void:
 	if not category_tabs: return
@@ -95,7 +104,10 @@ func _update_selected_label() -> void:
 	if _selected_id.is_empty():
 		lbl_selected.text = "Selecciona un edificio"
 		return
+	# Try buildings first, then resource objects
 	var raw: Dictionary = ConfigLoader.get_building(_selected_id)
+	if raw.is_empty():
+		raw = ConfigLoader.get_resource_object(_selected_id)
 	lbl_selected.text = "📐 %s  —  R para rotar" % raw.get("display_name", _selected_id)
 
 func _on_tab_changed(tab: int) -> void:

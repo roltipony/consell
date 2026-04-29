@@ -121,13 +121,18 @@ func _init_stats() -> void:
 	stats.citizen_died.connect(_on_stats_death)
 
 func _on_new_day_stats(_day: int, _month: int, _year: int) -> void:
+	if is_queued_for_deletion(): return
 	if stats != null:
 		stats.tick_day()
+		# Children age every day so they grow up quickly (1 day per year of age).
+		if is_child:
+			stats.tick_day_age(true)
+			_check_child_grown_up()
 
 func _on_new_year_stats(_year: int) -> void:
+	if is_queued_for_deletion(): return
 	if stats != null:
 		stats.tick_year()
-		_check_child_grown_up()
 
 func _check_child_grown_up() -> void:
 	if not is_child or stats == null:
@@ -205,6 +210,7 @@ func _init_base_context() -> void:
 	_apply_phase(GameManager.game_time.hour)
 
 func _on_hour_changed(hour: int) -> void:
+	if is_queued_for_deletion(): return
 	var prev_phase: String = _ctx.get("current_phase", CitizenSchedule.PHASE_DEFAULT)
 	_apply_phase(hour)
 	# Reset eat flags at start of each eat phase.

@@ -34,7 +34,8 @@
         1.6
       ],
       "color": "#c8a020"
-    }
+    },
+    "material_cost": {}
   },
   "cottage": {
     "id": "cottage",
@@ -74,7 +75,8 @@
         1.7
       ],
       "color": "#cc2222"
-    }
+    },
+    "material_cost": {}
   },
   "wheat_field": {
     "id": "wheat_field",
@@ -111,7 +113,8 @@
         1.8
       ],
       "color": "#d4a820"
-    }
+    },
+    "material_cost": {}
   },
   "market": {
     "id": "market",
@@ -152,7 +155,8 @@
         3.6
       ],
       "color": "#2255cc"
-    }
+    },
+    "material_cost": {}
   },
   "farm": {
     "id": "farm",
@@ -194,7 +198,8 @@
         3.6
       ],
       "color": "#88aa22"
-    }
+    },
+    "material_cost": {}
   },
   "well": {
     "id": "well",
@@ -232,7 +237,8 @@
       "radius": 0.5,
       "height": 1.2,
       "color": "#8888cc"
-    }
+    },
+    "material_cost": {}
   },
   "road": {
     "id": "road",
@@ -269,7 +275,8 @@
         1.9
       ],
       "color": "#555555"
-    }
+    },
+    "material_cost": {}
   },
   "tavern": {
     "id": "tavern",
@@ -310,7 +317,8 @@
         1.7
       ],
       "color": "#aa5511"
-    }
+    },
+    "material_cost": {}
   },
   "guard_post": {
     "id": "guard_post",
@@ -346,6 +354,93 @@
       "radius": 0.65,
       "height": 5.0,
       "color": "#888888"
-    }
+    },
+    "material_cost": {}
+  },
+  "sawmill": {
+    "id": "sawmill",
+    "display_name": "Aserradero",
+    "description": "Los leñadores residen aquí y talan árboles para producir madera.",
+    "category": "extraction",
+    "icon_path": "res://assets/textures/buildings/sawmill.png",
+    "scene_path": "res://scenes/buildings/Sawmill.tscn",
+    "size": [
+      2,
+      2
+    ],
+    "build_cost": 120,
+    "demolish_refund": 40,
+    "upkeep_per_tick": 1,
+    "income_per_tick": 0,
+    "population_capacity": 4,
+    "citizen_type": "lumberjack",
+    "jobs_provided": 0,
+    "happiness_modifier": 0.0,
+    "resource_production": {
+      "wood": 0
+    },
+    "resource_consumption": {},
+    "material_cost": {},
+    "requires_road": false,
+    "requires_power": false,
+    "requires_water": false,
+    "unlock_level": 0,
+    "max_level": 2,
+    "upgrade_costs": [
+      200
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        3.4,
+        2.2,
+        3.4
+      ],
+      "color": "#8b5e2e"
+    },
+    "spawns_initial_citizen": false
+  },
+  "quarry": {
+    "id": "quarry",
+    "display_name": "Cantera",
+    "description": "Los mineros residen aquí y extraen rocas para producir piedra.",
+    "category": "extraction",
+    "icon_path": "res://assets/textures/buildings/quarry.png",
+    "scene_path": "res://scenes/buildings/Quarry.tscn",
+    "size": [
+      2,
+      2
+    ],
+    "build_cost": 150,
+    "demolish_refund": 50,
+    "upkeep_per_tick": 1,
+    "income_per_tick": 0,
+    "population_capacity": 4,
+    "citizen_type": "miner",
+    "jobs_provided": 0,
+    "happiness_modifier": 0.0,
+    "resource_production": {
+      "stone": 0
+    },
+    "resource_consumption": {},
+    "material_cost": {},
+    "requires_road": false,
+    "requires_power": false,
+    "requires_water": false,
+    "unlock_level": 0,
+    "max_level": 2,
+    "upgrade_costs": [
+      250
+    ],
+    "mesh": {
+      "type": "box",
+      "size": [
+        3.4,
+        1.8,
+        3.4
+      ],
+      "color": "#6e6e72"
+    },
+    "spawns_initial_citizen": false
   }
 }

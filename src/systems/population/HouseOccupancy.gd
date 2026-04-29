@@ -68,11 +68,18 @@ func can_have_child(house_cell: Vector2i) -> bool:
 
 func find_house_for_immigrant(gender: String) -> Vector2i:
 	_reload_config()
-	var opposite: String   = _opposite_gender(gender)
-	var fallback: Vector2i = Vector2i(-1, -1)
-	var gs: GridSystem     = GameManager.grid_system
+	var opposite: String = _opposite_gender(gender)
+	var gs: GridSystem   = GameManager.grid_system
 	if gs == null:
 		return Vector2i(-1, -1)
+
+	# Extraction buildings (sawmill, quarry) that are empty take priority —
+	# the immigrant becomes the correct worker type for that building.
+	# best extraction: cell with fewest residents (fill evenly across all types)
+	var best_extraction: Vector2i = Vector2i(-1, -1)
+	var best_extraction_count: int = 9999
+	var residential_fallback: Vector2i = Vector2i(-1, -1)
+
 	var visited: Dictionary = {}
 	for cell in gs.buildings:
 		var bld: Building = gs.buildings[cell]
@@ -88,16 +95,26 @@ func find_house_for_immigrant(gender: String) -> Vector2i:
 		var capacity: int    = bld.data.population_capacity
 		if residents.size() >= capacity:
 			continue
-		if residents.size() == 1:
-			var lone: Citizen = residents[0]
-			if is_instance_valid(lone) and lone.stats != null \
-					and lone.stats.gender == opposite \
-					and not lone.is_child \
-					and lone.partner == null:
-				return origin
-		if fallback == Vector2i(-1, -1):
-			fallback = origin
-	return fallback
+
+		if not bld.data.spawns_initial_citizen:
+			# Pick the extraction building with fewest current residents
+			if residents.size() < best_extraction_count:
+				best_extraction_count = residents.size()
+				best_extraction       = origin
+		else:
+			if residents.size() == 1:
+				var lone: Citizen = residents[0]
+				if is_instance_valid(lone) and lone.stats != null \
+						and lone.stats.gender == opposite \
+						and not lone.is_child \
+						and lone.partner == null:
+					return origin
+			if residential_fallback == Vector2i(-1, -1):
+				residential_fallback = origin
+
+	if best_extraction != Vector2i(-1, -1):
+		return best_extraction
+	return residential_fallback
 
 func process_day(_day: int, _month: int, _year: int) -> void:
 	_reload_config()
@@ -203,7 +220,7 @@ func _try_form_couple(house_cell: Vector2i) -> void:
 	for citizen in _houses[house_cell]["residents"]:
 		if not is_instance_valid(citizen) or citizen.stats == null or citizen.is_child:
 			continue
-		if citizen.partner != null and is_instance_valid(citizen.partner):
+		if citizen.partner != null and is_instance_valid(citizen.partner) and not citizen.partner.is_queued_for_deletion():
 			continue
 		match citizen.stats.gender:
 			"male":   if lone_male   == null: lone_male   = citizen
@@ -231,7 +248,7 @@ func _get_couple(house_cell: Vector2i) -> Array:
 		if not is_instance_valid(citizen) or citizen.stats == null or citizen.is_child:
 			continue
 		var p: Citizen = citizen.partner
-		if p != null and is_instance_valid(p) \
+		if p != null and is_instance_valid(p) and not p.is_queued_for_deletion() \
 				and _resident_to_house.get(p, Vector2i(-1, -1)) == house_cell:
 			return [citizen, p]
 	return []

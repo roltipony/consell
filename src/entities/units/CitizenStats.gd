@@ -147,8 +147,17 @@ func tick_day() -> void:
 	if thirst <= 0.0:
 		_drain_health(thirst_damage_per_day, "dehydration")
 
+# ─── Per-day tick (age) ───────────────────────────────────────────────────────
+## Children age by 1 every day so they grow up quickly.
+## Called from Citizen._on_new_day_stats alongside tick_day().
+func tick_day_age(is_child: bool) -> void:
+	if _dead or not is_child:
+		return
+	age += 1
+	emit_signal("stat_changed", "age", age)
+
 # ─── Per-year tick ────────────────────────────────────────────────────────────
-## Must be called once per in-game year (connected to EventBus.new_year).
+## Adults age by 1 every in-game year (connected to EventBus.new_year).
 func tick_year() -> void:
 	if _dead:
 		return

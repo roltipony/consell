@@ -36,6 +36,14 @@ custom_minimum_size = Vector2(100, 0)
 text = "🌾 0"
 custom_minimum_size = Vector2(100, 0)
 
+[node name="WoodLabel" type="Label" parent="HUD/TopBar"]
+text = "🪵 0"
+custom_minimum_size = Vector2(100, 0)
+
+[node name="StoneLabel" type="Label" parent="HUD/TopBar"]
+text = "🪨 0"
+custom_minimum_size = Vector2(100, 0)
+
 [node name="TimeLabel" type="Label" parent="HUD/TopBar"]
 text = "📅 1/1/1"
 custom_minimum_size = Vector2(120, 0)

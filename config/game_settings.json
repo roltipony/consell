@@ -77,7 +77,9 @@
   },
   "citizen_type_classes": {
     "farmer": "FarmerCitizen",
-    "generic": "Citizen"
+    "generic": "Citizen",
+    "lumberjack": "LumberjackCitizen",
+    "miner": "MinerCitizen"
   },
   "citizen_schedules": {
     "generic": [
@@ -113,6 +115,50 @@
       }
     ],
     "farmer": [
+      {
+        "id": "sleep",
+        "start": 0,
+        "end": 8
+      },
+      {
+        "id": "work",
+        "start": 8,
+        "end": 14
+      },
+      {
+        "id": "eat",
+        "start": 14,
+        "end": 15
+      },
+      {
+        "id": "leisure",
+        "start": 15,
+        "end": 24
+      }
+    ],
+    "lumberjack": [
+      {
+        "id": "sleep",
+        "start": 0,
+        "end": 8
+      },
+      {
+        "id": "work",
+        "start": 8,
+        "end": 14
+      },
+      {
+        "id": "eat",
+        "start": 14,
+        "end": 15
+      },
+      {
+        "id": "leisure",
+        "start": 15,
+        "end": 24
+      }
+    ],
+    "miner": [
       {
         "id": "sleep",
         "start": 0,
@@ -214,6 +260,18 @@
       "eat": "#d09040",
       "leisure": "#70a0d0",
       "sleep": "#4060a0"
+    },
+    "lumberjack": {
+      "sleep": "#5a3010",
+      "work": "#6aad2e",
+      "eat": "#e8c840",
+      "leisure": "#4488cc"
+    },
+    "miner": {
+      "sleep": "#3a3a3a",
+      "work": "#8c8c8c",
+      "eat": "#e8c840",
+      "leisure": "#4488cc"
     }
   },
   "citizen_names": {
@@ -264,8 +322,14 @@
   },
   "house_rules": {
     "max_children": 4,
-    "child_growth_age": 4,
+    "child_growth_age": 1,
     "couple_days_to_reproduce": 2,
     "child_mesh_scale_factor": 0.55
+  },
+  "citizen_type_script_paths": {
+    "farmer": "res://src/entities/units/FarmerCitizen.gd",
+    "generic": "res://src/entities/units/Citizen.gd",
+    "lumberjack": "res://src/entities/units/LumberjackCitizen.gd",
+    "miner": "res://src/entities/units/MinerCitizen.gd"
   }
 }

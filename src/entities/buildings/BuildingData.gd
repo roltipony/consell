@@ -22,6 +22,17 @@ extends Resource
 @export var demolish_refund: int = 0
 @export var upkeep_per_tick: int = 0
 
+## If true (default), placing this building immediately spawns one citizen of the
+## correct type. Set to false for extraction buildings (Sawmill, Quarry) that
+## start empty and wait for an unemployed adult to move in.
+@export var spawns_initial_citizen: bool = true
+
+## Material cost required to construct this building.
+## Keys are resource ids (e.g. "wood", "stone"), values are int amounts.
+## NOTE: material costs are defined in config but NOT enforced in gameplay yet.
+## Enable enforcement in BuildingPlacer._try_place() when ready.
+@export var material_cost: Dictionary = {}
+
 # ─── Production / Effects ─────────────────────────────────────────
 @export var income_per_tick: int = 0
 @export var population_capacity: int = 0
@@ -55,9 +66,11 @@ static func from_dict(data: Dictionary) -> BuildingData:
 	var sz: Array           = data.get("size",                 [1, 1])
 	bd.size                 = Vector2i(sz[0], sz[1])
 	bd.citizen_type         = data.get("citizen_type",         "generic")
-	bd.build_cost           = data.get("build_cost",           0)
-	bd.demolish_refund      = data.get("demolish_refund",      0)
-	bd.upkeep_per_tick      = data.get("upkeep_per_tick",      0)
+	bd.build_cost               = data.get("build_cost",               0)
+	bd.demolish_refund          = data.get("demolish_refund",          0)
+	bd.upkeep_per_tick          = data.get("upkeep_per_tick",          0)
+	bd.material_cost            = data.get("material_cost",            {})
+	bd.spawns_initial_citizen   = data.get("spawns_initial_citizen",   true)
 	bd.income_per_tick      = data.get("income_per_tick",      0)
 	bd.population_capacity  = data.get("population_capacity",  0)
 	bd.jobs_provided        = data.get("jobs_provided",        0)

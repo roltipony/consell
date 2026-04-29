@@ -52,6 +52,12 @@ signal building_upgraded(building_data: BuildingData, cell: Vector2i)
 signal building_selected(building_data: BuildingData, cell: Vector2i)
 signal building_deselected()
 
+# ─── Resource Object Signals ───────────────────────────────────────
+## Emitted when a placeable resource object (tree, rock) is added to the world.
+signal resource_object_placed(object_type: String, cell: Vector2i)
+## Emitted when a resource object is harvested and removed from the world.
+signal resource_object_removed(object_type: String, cell: Vector2i)
+
 # ─── Grid / Map Signals ────────────────────────────────────────────
 signal cell_hovered(cell: Vector2i)
 signal cell_clicked(cell: Vector2i, button: int)

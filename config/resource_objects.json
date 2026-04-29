@@ -1,0 +1,30 @@
+{
+  "tree": {
+    "id": "tree",
+    "display_name": "Árbol",
+    "description": "Un árbol que los leñadores pueden talar para obtener madera.",
+    "category": "resource_object",
+    "script_path": "res://src/entities/world/TreeObject.gd",
+    "yield_resource_id": "wood",
+    "yield_amount": 3.0,
+    "worker_type": "tree",
+    "mesh": {
+      "type": "tree",
+      "color": "#2a8a10"
+    }
+  },
+  "rock": {
+    "id": "rock",
+    "display_name": "Roca",
+    "description": "Un afloramiento rocoso que los mineros pueden picar para obtener piedra.",
+    "category": "resource_object",
+    "script_path": "res://src/entities/world/RockObject.gd",
+    "yield_resource_id": "stone",
+    "yield_amount": 3.0,
+    "worker_type": "rock",
+    "mesh": {
+      "type": "rock",
+      "color": "#888892"
+    }
+  }
+}

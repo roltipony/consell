@@ -29,11 +29,18 @@ func _ready() -> void:
 func _load_config() -> void:
 	var cfg: Dictionary = ConfigLoader.game_settings
 	_citizen_cfg = cfg.get(CFG_KEY, {})
-	var type_map: Dictionary = cfg.get(CFG_TYPES_KEY, {})
+	var type_map: Dictionary   = cfg.get(CFG_TYPES_KEY, {})
+	var path_map: Dictionary   = cfg.get("citizen_type_script_paths", {})
 	_type_scripts.clear()
 	for type_key in type_map:
 		var class_name_str: String = type_map[type_key]
-		var script := _find_script_by_class_name(class_name_str)
+		# 1. Try explicit path first (works even before Godot re-imports the project)
+		var script: GDScript = null
+		if path_map.has(type_key):
+			script = load(path_map[type_key]) as GDScript
+		# 2. Fall back to global class list lookup
+		if script == null:
+			script = _find_script_by_class_name(class_name_str)
 		if script:
 			_type_scripts[type_key] = script
 		else:
@@ -50,6 +57,9 @@ func _find_script_by_class_name(class_name_str: String) -> GDScript:
 
 func _on_building_placed(building_data: BuildingData, cell: Vector2i) -> void:
 	if building_data.population_capacity <= 0:
+		return
+	# Extraction buildings start empty; an unemployed adult will move in later.
+	if not building_data.spawns_initial_citizen:
 		return
 	_spawn_citizen_for_cell(cell, building_data)
 
